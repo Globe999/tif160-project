@@ -31,7 +31,7 @@ const int servo_pins[] = {3, 11, 6, 9, 10, 5};
 
 const int pos_init[] = {1700, 1500, 2000, 2200, 1650, 1600};
 int curr_pos[6];
-int new_servo_val[6];
+int new_positions[6];
 
 const int pos_min[] = {560, 550, 950, 750, 550, 550};
 const int pos_max[] = {2330, 2340, 2400, 2200, 2400, 2150};
@@ -205,7 +205,7 @@ void init_robot_positions(){
   byte i;
   for (i=0; i<(sizeof(pos_init)/sizeof(int)); i++){
     curr_pos[i] = pos_init[i];
-    new_servo_val[i] = curr_pos[i];
+    new_positions[i] = curr_pos[i];
   }
 
 	delay(2000);
@@ -225,25 +225,39 @@ void setup() {
 }
 // Example 3 - Receive with start- and end-markers
 
-const byte numChars = 32;
+const byte numChars = 28;
 char receivedChars[numChars];
 
-boolean newData = false;
+bool newData = false;
 
 
 void loop() {
-    recvWithStartEndMarkers();
+  recvWithStartEndMarkers(&newData);
+  if (newData == true) {
+    parseCommand(receivedChars, new_positions, 6);
+    servo_body_ex(new_positions[0]);
+    servo_neck_pan(new_positions[1]);
+    servo_neck_tilt(new_positions[2]);
+    servo_shoulder(new_positions[3]);
+    servo_elbow(new_positions[4]);
+    servo_gripper_ex(new_positions[5]);
     showNewData();
+    newData = false;
+  }
 }
 
-void recvWithStartEndMarkers() {
+
+
+void recvWithStartEndMarkers(bool *newData) {
     static boolean recvInProgress = false;
     static byte ndx = 0;
     char startMarker = '<';
     char endMarker = '>';
     char rc;
+
+    // 5 different angles
  
-    while (Serial.available() > 0 && newData == false) {
+    while (Serial.available() > 0 && *newData == false) {
         rc = Serial.read();
 
         if (recvInProgress == true) {
@@ -258,7 +272,7 @@ void recvWithStartEndMarkers() {
                 receivedChars[ndx] = '\0'; // terminate the string
                 recvInProgress = false;
                 ndx = 0;
-                newData = true;
+                *newData = true;
             }
         }
 
@@ -267,11 +281,29 @@ void recvWithStartEndMarkers() {
         }
     }
 }
+void parseCommand(char* command, int* new_positions, int numValues) {
+    char *ptr = strtok(command, ",");
+    int i = 0;
+    while (ptr != NULL && i < numValues) {
+        new_positions[i] = atoi(ptr);  // Convert string to integer
+        i++;
+        ptr = strtok(NULL, ",");
+    }
+}
 
 void showNewData() {
     if (newData == true) {
-        Serial.print("This just in ... ");
+        Serial.print("<This just in ...");
         Serial.println(receivedChars);
-        newData = false;
+        // Parse the received command
+        // parseCommand(receivedChars, new_positions, 6);
+        // Print the parsed values
+        for (int i = 0; i < 6; i++) {
+            Serial.print("Value ");
+            Serial.print(i);
+            Serial.print(": ");
+            Serial.println(new_positions[i]);
+        }
+        Serial.print(">");
     }
 }

@@ -1,174 +1,163 @@
-# 19 July 2014
-
-# in case any of this upsets Python purists it has been converted from an equivalent JRuby program
-
-# this is designed to work with ... ArduinoPC2.ino ...
-
-# the purpose of this program and the associated Arduino program is to demonstrate a system for sending
-#   and receiving data between a PC and an Arduino.
-
-# The key functions are:
-#    sendToArduino(str) which sends the given string to the Arduino. The string may
-#                       contain characters with any of the values 0 to 255
-#
-#    recvFromArduino()  which returns an array.
-#                         The first element contains the number of bytes that the Arduino said it included in
-#                             message. This can be used to check that the full message was received.
-#                         The second element contains the message as a string
-
-
-# the overall process followed by the demo program is as follows
-#   open the serial connection to the Arduino - which causes the Arduino to reset
-#   wait for a message from the Arduino to give it time to reset
-#   loop through a series of test messages
-#      send a message and display it on the PC screen
-#      wait for a reply and display it on the PC
-
-# to facilitate debugging the Arduino code this program interprets any message from the Arduino
-#    with the message length set to 0 as a debug message which is displayed on the PC screen
-
-# the message to be sent to the Arduino starts with < and ends with >
-#    the message content comprises a string, an integer and a float
-#    the numbers are sent as their ascii equivalents
-#    for example <LED1,200,0.2>
-#    this means set the flash interval for LED1 to 200 millisecs
-#      and move the servo to 20% of its range
-
-# receiving a message from the Arduino involves
-#    waiting until the startMarker is detected
-#    saving all subsequent bytes until the end marker is detected
-
-# NOTES
-#       this program does not include any timeouts to deal with delays in communication
-#
-#       for simplicity the program does NOT search for the comm port - the user must modify the
-#         code to include the correct reference.
-#         search for the lines
-#               serPort = "/dev/ttyS80"
-#               baudRate = 9600
-#               ser = serial.Serial(serPort, baudRate)
-#
-
-
-# =====================================
-
-#  Function Definitions
-
-# =====================================
-
-
-def sendToArduino(sendStr):
-    ser.write(sendStr)
-
-
-# ======================================
-
-
-def recvFromArduino():
-    global startMarker, endMarker
-
-    ck = ""
-    x = "z"  # any value that is not an end- or startMarker
-    byteCount = -1  # to allow for the fact that the last increment will be one too many
-
-    # wait for the start character
-    while ord(x) != startMarker:
-        x = ser.read()
-
-    # save data until the end marker is found
-    while ord(x) != endMarker:
-        if ord(x) != startMarker:
-            ck = ck + x
-            byteCount += 1
-        x = ser.read()
-
-    return ck
-
-
-# ============================
-
-
-def waitForArduino():
-
-    # wait until the Arduino sends 'Arduino Ready' - allows time for Arduino reset
-    # it also ensures that any bytes left over from a previous message are discarded
-
-    global startMarker, endMarker
-
-    msg = ""
-    while msg.find("Arduino is ready") == -1:
-
-        while ser.inWaiting() == 0:
-            pass
-
-        msg = recvFromArduino()
-
-        print(msg)
-
-
-# ======================================
-
-
-def runTest(td):
-    numLoops = len(td)
-    waitingForReply = False
-
-    n = 0
-    while n < numLoops:
-
-        teststr = td[n]
-
-        if waitingForReply == False:
-            sendToArduino(teststr)
-            print("Sent from PC -- LOOP NUM " + str(n) + " TEST STR " + teststr)
-            waitingForReply = True
-
-        if waitingForReply == True:
-
-            while ser.inWaiting() == 0:
-                pass
-
-            dataRecvd = recvFromArduino()
-            print("Reply Received  " + dataRecvd)
-            n += 1
-            waitingForReply = False
-
-            print("===========")
-        time.sleep(5)
-
-
-# ======================================
-
-# THE DEMO PROGRAM STARTS HERE
-
-# ======================================
-
+import atexit
+from dataclasses import dataclass
 import serial
 import time
 
+@dataclass
+class Servo:
+    position: int
+    min: int
+    max: int
+
+
+class ArduinoSerial:
+    def __init__(self, port: str = "/dev/ttyACM0", baud:int = 57600) -> None:
+        self.serPort = port
+        self.baud = baud
+        self.body = Servo(1700, 560, 2330)
+        self.camera_pan = Servo(1500, 550, 2340)
+        self.camera_tilt = Servo(2000, 950, 2400)
+        self.shoulder = Servo(2300, 750, 2300)
+        self.elbow = Servo(1650, 550,2400)
+        self.gripper = Servo(1600, 550, 2150)
+        self.ser = None
+        self.start_marker = 60 # ASCII '<'
+        self.end_marker = 62 # ASCII '>'
+        self.connect()
+        
+    def connect(self):
+        self.ser = serial.Serial(self.serPort, self.baud)
+        print("Serial port " + self.serPort + " opened  Baudrate " + str(self.baud))
+
+    def close(self):
+        if self.ser and self.ser.is_open:
+            self.ser.close()
+            print("Serial port " + self.serPort + " closed")
+            
+            
+    def send_to_arduino(self, wait_for_reply = False):
+        sendStr = f"{chr(self.start_marker)}{self.shoulder.position:04d},{self.elbow.position:04d},{self.gripper.position:04d},{self.camera_pan.position:04d},{self.camera_tilt.position:04d},{self.body.position:04d}{chr(self.end_marker)}"
+        print(self.start_marker)
+        print(f"Sent from PC -- {sendStr}")
+        self.ser.write(sendStr.encode())
+        
+        if wait_for_reply:
+            while self.ser.inWaiting() == 0:
+                pass
+
+            dataRecvd = self.recv_from_arduino()
+            print("Reply Received  " + dataRecvd)
+            return dataRecvd
+        else: 
+            return True
+    
+    def recv_from_arduino(self):
+        ck = ""
+        x = b"z"  # any value that is not an end- or startMarker
+        byteCount = -1  # to allow for the fact that the last increment will be one too many
+
+        # wait for the start character
+        while ord(x) != self.start_marker:
+            x = self.ser.read()
+
+        # save data until the end marker is found
+        while ord(x) != self.end_marker:
+            if ord(x) != self.start_marker:
+                ck = ck + x.decode()  # Decode bytes to string
+                byteCount += 1
+            x = self.ser.read()
+
+        return ck
+
+    def wait_for_arduino(self):
+        msg = ""
+        while msg.find("Arduino is ready") == -1:
+            while self.ser.inWaiting() == 0:
+                pass
+
+            msg = self.recv_from_arduino()
+            print(msg)
+# Function Definitions
+
+# def sendToArduino(sendStr):
+#     ser.write(sendStr.encode())  # Encode the string to bytes
+
+# def recvFromArduino():
+#     global startMarker, endMarker
+
+#     ck = ""
+#     x = b"z"  # any value that is not an end- or startMarker
+#     byteCount = -1  # to allow for the fact that the last increment will be one too many
+
+#     # wait for the start character
+#     while ord(x) != startMarker:
+#         x = ser.read()
+
+#     # save data until the end marker is found
+#     while ord(x) != endMarker:
+#         if ord(x) != startMarker:
+#             ck = ck + x.decode()  # Decode bytes to string
+#             byteCount += 1
+#         x = ser.read()
+
+#     return ck
+
+# def waitForArduino():
+#     global startMarker, endMarker
+
+#     msg = ""
+#     while msg.find("Arduino is ready") == -1:
+#         while ser.inWaiting() == 0:
+#             pass
+
+#         msg = recvFromArduino()
+#         print(msg)
+
+# def runTest(td):
+#     numLoops = len(td)
+#     waitingForReply = False
+
+#     n = 0
+#     while n < numLoops:
+#         teststr = td[n]
+
+#         if not waitingForReply:
+#             sendToArduino(teststr)
+#             print("Sent from PC -- LOOP NUM " + str(n) + " TEST STR " + teststr)
+#             waitingForReply = True
+
+#         if waitingForReply:
+#             while ser.inWaiting() == 0:
+#                 pass
+
+#             dataRecvd = recvFromArduino()
+#             print("Reply Received  " + dataRecvd)
+#             n += 1
+#             waitingForReply = False
+
+#             print("===========")
+#         time.sleep(5)
+#         print("Loop: " + str(n))
+
+# THE DEMO PROGRAM STARTS HERE
 
 # NOTE the user must ensure that the serial port and baudrate are correct
 serPort = "/dev/ttyACM0"
 baudRate = 57600
-ser = serial.Serial(serPort, baudRate)
-print("Serial port " + serPort + " opened  Baudrate " + str(baudRate))
+# ser = serial.Serial(serPort, baudRate)
+# print("Serial port " + serPort + " opened  Baudrate " + str(baudRate))
 
+startMarker = 60  # ASCII '<'
+endMarker = 62    # ASCII '>'
 
-startMarker = 60
-endMarker = 62
+arduino = ArduinoSerial()
 
+arduino.wait_for_arduino()
 
-waitForArduino()
+arduino.send_to_arduino(wait_for_reply=True)
 
-
-testData = []
-testData.append("<LED1,200,0.2>")
-testData.append("<LED1,800,0.7>")
-testData.append("<LED2,800,0.5>")
-testData.append("<LED2,200,0.2>")
-testData.append("<LED1,200,0.7>")
-
-runTest(testData)
-
-
-ser.close
+for i in range(10):
+    arduino.shoulder.position -= 100
+    arduino.send_to_arduino(wait_for_reply=True)
+    time.sleep(1)
+arduino.close()
