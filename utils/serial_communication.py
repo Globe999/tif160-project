@@ -1,14 +1,30 @@
-import atexit
 from dataclasses import dataclass
+from typing import List
 import serial
 import time
 
 
+from dataclasses import dataclass
+
 @dataclass
 class Servo:
-    position: int
+    _position: int
     min: int
     max: int
+    name: str = ""
+
+    @property
+    def position(self):
+        return self._position
+
+    @position.setter
+    def position(self, value):
+        if value < self.min:
+            self._position = self.min
+        elif value > self.max:
+            self._position = self.max
+        else:
+            self._position = value
 
 
 class ArduinoSerial:
@@ -22,18 +38,19 @@ class ArduinoSerial:
         self.ELBOW = 4
         self.GRIPPER = 5
 
-        self.servos = [
-            Servo(1700, 560, 2330),
-            Servo(1500, 550, 2340),
-            Servo(2000, 950, 2400),
-            Servo(2300, 750, 2300),
-            Servo(1650, 550, 2400),
-            Servo(1600, 550, 2150),
+        self.servos: List[Servo] = [
+            Servo(1700, 560, 2330, "body"),
+            Servo(1500, 550, 2340, "camera_pan"),
+            Servo(2000, 950, 2400, "camera_tilt"),
+            Servo(2300, 750, 2300, "shoulder"),
+            Servo(1650, 550, 2400, "elbow"),
+            Servo(1600, 550, 2150, "gripper"),
         ]
         self.ser = None
         self.start_marker = 60  # ASCII '<'
         self.end_marker = 62  # ASCII '>'
         self.connect()
+        self.wait_for_arduino()
 
     def connect(self):
         self.ser = serial.Serial(self.serPort, self.baud)
@@ -93,15 +110,15 @@ class ArduinoSerial:
             msg = self.recv_from_arduino()
             print(msg)
 
+if __name__ == "__main__":
+    arduino = ArduinoSerial()
 
-arduino = ArduinoSerial()
+    arduino.wait_for_arduino()
 
-arduino.wait_for_arduino()
-
-arduino.send_to_arduino(wait_for_reply=True)
-
-for i in range(10):
-    arduino.servos[arduino.SHOULDER].position -= 100
     arduino.send_to_arduino(wait_for_reply=True)
-    time.sleep(1)
-arduino.close()
+
+    for i in range(10):
+        arduino.servos[arduino.SHOULDER].position -= 100
+        arduino.send_to_arduino(wait_for_reply=True)
+        time.sleep(1)
+    arduino.close()
