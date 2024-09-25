@@ -12,6 +12,29 @@ class Servo:
     min: int
     max: int
     name: str = ""
+    _angle: int = 0
+    only_positive_angle = False #0-180 or -90 to 90
+
+
+
+    @property
+    def angle(self):
+        return self._angle
+
+
+    @angle.setter
+    def angle(self, value):
+        
+        # we want to set position and map the angle to the position
+        self._angle = value
+        
+        span = (self.max - self.min) / 180
+        
+        if not self.only_positive_angle:
+            value = value + 90
+            
+        pos = span * value + self.min
+        self.position = pos
 
     @property
     def position(self):
@@ -20,11 +43,13 @@ class Servo:
     @position.setter
     def position(self, value):
         if value < self.min:
+            print("Warn: Value less than min - ", self.name)
             self._position = self.min
         elif value > self.max:
+            print("Warn: Value greater than max - ", self.name)
             self._position = self.max
         else:
-            self._position = value
+            self._position = int(value)
 
 
 class ArduinoSerial:
