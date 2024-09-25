@@ -2,9 +2,9 @@ import numpy as np
 
 def dumb_but_optimized_inverse_kinematics(x, y, z):
     # Define angle ranges
-    theta0_range = np.arange(0, 181, 1) * np.pi / 180  # range for theta0 (0 to 180 degrees)
-    theta1_range = np.arange(0, 181, 1) * np.pi / 180  # range for theta1 (0 to 180 degrees)
-    theta2_range = np.arange(0, 91, 1) * np.pi / 180   # range for theta2 (0 to 90 degrees)
+    theta0_range = np.arange(-90, 91, 1) * np.pi / 180  # range for theta0 (0 to 180 degrees)
+    theta1_range = np.arange(0, 121, 1) * np.pi / 180  # range for theta1 (0 to 180 degrees)
+    theta2_range = np.arange(-90, 91, 1) * np.pi / 180   # range for theta2 (0 to 90 degrees)
 
     # length parameters of robot
     L2 = 0.315
@@ -54,3 +54,5 @@ def dumb_but_optimized_inverse_kinematics(x, y, z):
 
 # Test the optimized inverse kinematics function
 
+i,j,k = dumb_but_optimized_inverse_kinematics(0.1,0.1,0.3)
+print(i,j,k)
