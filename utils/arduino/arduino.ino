@@ -27,16 +27,14 @@ Servo elbow;
 Servo gripper;
 
 //Init position of all servos
-const int servo_pins[] = {3, 11, 6, 9, 10, 5};
+const int servo_pins[] = {3, 9, 12, 6, 10, 5};
 
-const int pos_init[] = {1700, 1500, 2000, 2200, 1650, 1600};
+const int pos_init[] = {1700, 1500, 2000, 2300, 1650, 1600};
 int curr_pos[6];
 int new_positions[6];
 
 const int pos_min[] = {560, 550, 950, 750, 550, 550};
-const int pos_max[] = {2330, 2340, 2400, 2200, 2400, 2150};
-
-const int pos_move[] = {2200, 1500, 2000, 1100, 2300, 1600};
+const int pos_max[] = {2330, 2340, 2400, 2300, 2400, 2150};
 
 //Servo update function
 void servo_body_ex(const int new_pos) {
@@ -225,13 +223,21 @@ void setup() {
 }
 // Example 3 - Receive with start- and end-markers
 
-const byte numChars = 28;
+const byte numChars = 40;
 char receivedChars[numChars];
 
 bool newData = false;
 
 
 void loop() {
+  // Serial.println(("Neck min"));
+  // servo_neck_tilt(950);
+  // delay(100);
+  // servo_neck_tilt(2400);
+  // Serial.println(("Neck max"));
+
+
+
   recvWithStartEndMarkers(&newData);
   if (newData == true) {
     parseCommand(receivedChars, new_positions, 6);
@@ -255,8 +261,7 @@ void recvWithStartEndMarkers(bool *newData) {
     char endMarker = '>';
     char rc;
 
-    // 5 different angles
- 
+
     while (Serial.available() > 0 && *newData == false) {
         rc = Serial.read();
 
@@ -292,18 +297,12 @@ void parseCommand(char* command, int* new_positions, int numValues) {
 }
 
 void showNewData() {
-    if (newData == true) {
-        Serial.print("<This just in ...");
-        Serial.println(receivedChars);
-        // Parse the received command
-        // parseCommand(receivedChars, new_positions, 6);
-        // Print the parsed values
-        for (int i = 0; i < 6; i++) {
-            Serial.print("Value ");
-            Serial.print(i);
-            Serial.print(": ");
-            Serial.println(new_positions[i]);
+    Serial.print("<ARDUINO -- ");
+    for (int i = 0; i < 6; i++) {  // Fix the loop to iterate over the correct number of elements
+        Serial.print(new_positions[i]);
+        if (i < 5) {
+            Serial.print(',');
         }
-        Serial.print(">");
     }
+    Serial.println(">");
 }
