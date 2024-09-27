@@ -6,33 +6,44 @@ import time
 
 from dataclasses import dataclass
 
-@dataclass
+import serial.serialutil
+
+
 class Servo:
-    _position: int
-    min: int
-    max: int
-    name: str = ""
-    _angle: int = 0
-    only_positive_angle = False #0-180 or -90 to 90
-
-
+    def __init__(
+        self,
+        position: int,
+        min: int,
+        max: int,
+        name: str,
+        only_positive_angle: bool,
+        offset: int,
+        inversed: bool,
+        angle: int = 0,
+    ):
+        self._position = position
+        self.min = min
+        self.max = max
+        self.name = name
+        self.only_positive_angle = only_positive_angle
+        self.offset = offset
+        self._inversed = inversed
+        self._angle = angle
 
     @property
     def angle(self):
         return self._angle
 
-
     @angle.setter
     def angle(self, value):
-        
         # we want to set position and map the angle to the position
         self._angle = value
-        
+
         span = (self.max - self.min) / 180
-        
+
         if not self.only_positive_angle:
             value = value + 90
-            
+
         pos = span * value + self.min
         self.position = pos
 
@@ -42,6 +53,25 @@ class Servo:
 
     @position.setter
     def position(self, value):
+        if self._inversed:
+            half = int((self.max - self.min) / 2 + self.min)
+            
+            if  value < half:
+                diff = half - value
+                
+                value = half + diff            
+            else:
+                diff = value - half
+                value = half - diff
+            
+            
+            # if value < half:
+            #     value = (half - value) * 2 + value
+            # else:
+            #     value = value - (value - half) * 2
+
+        value = value + self.offset
+
         if value < self.min:
             print("Warn: Value less than min - ", self.name)
             self._position = self.min
@@ -62,23 +92,94 @@ class ArduinoSerial:
         self.SHOULDER = 3
         self.ELBOW = 4
         self.GRIPPER = 5
+        self._gripper_open = False
 
         self.servos: List[Servo] = [
-            Servo(1700, 560, 2330, "body"),
-            Servo(1500, 550, 2340, "camera_pan"),
-            Servo(2000, 950, 2400, "camera_tilt"),
-            Servo(2300, 750, 2300, "shoulder"),
-            Servo(1650, 550, 2400, "elbow"),
-            Servo(1600, 550, 2150, "gripper"),
+            Servo(
+                position=1700,
+                min=560,
+                max=2330,
+                name="body",
+                only_positive_angle=False,
+                inversed=False,
+                offset=330,
+            ),
+            Servo(
+                position=1500,
+                min=550,
+                max=2340,
+                name="camera_pan",
+                only_positive_angle=False,
+                inversed=False,
+                offset=0,
+            ),
+            Servo(
+                position=2000,
+                min=950,
+                max=2400,
+                name="camera_tilt",
+                only_positive_angle=False,
+                inversed=False,
+                offset=0,
+            ),
+            Servo(
+                position=2300,
+                min=650,
+                max=2400,
+                name="shoulder",
+                only_positive_angle=True,
+                inversed=True,
+                offset=0,
+            ),
+            Servo(
+                position=1650,
+                min=600,
+                max=2300,
+                name="elbow",
+                only_positive_angle=False,
+                inversed=False,
+                offset=0,
+            ),
+            Servo(
+                position=1600,
+                min=550,
+                max=2150,
+                name="gripper",
+                only_positive_angle=False,
+                inversed=False,
+                offset=0,
+            ),
         ]
         self.ser = None
         self.start_marker = 60  # ASCII '<'
         self.end_marker = 62  # ASCII '>'
         self.connect()
         self.wait_for_arduino()
+        self.send_to_arduino()
+
+    @property
+    def gripper_open(self):
+        return self._gripper_open
+    
+    def open_gripper(self):
+        self._gripper_open = True
+        self.servos[self.GRIPPER].position = 750
+        self.send_to_arduino()
+    
+    def close_gripper(self):
+        self._gripper_open = False
+        self.servos[self.GRIPPER].position = 1050
+        self.send_to_arduino()
 
     def connect(self):
-        self.ser = serial.Serial(self.serPort, self.baud)
+        try:
+            self.ser = serial.Serial(self.serPort, self.baud)
+        except serial.serialutil.SerialException as e:
+            print("Error opening serial port: " + str(e))
+            print("Trying other port...")
+            self.serPort = "/dev/ttyACM1"
+            self.ser = serial.Serial(self.serPort, self.baud)
+        
         print("Serial port " + self.serPort + " opened  Baudrate " + str(self.baud))
 
     def close(self):
@@ -91,7 +192,7 @@ class ArduinoSerial:
         servo_positions = ",".join([f"{servo.position:04d}" for servo in self.servos])
         send_str += servo_positions
         send_str += chr(self.end_marker)
-        
+
         print(self.start_marker)
         print(f"Sent from PC -- {send_str}")
         self.ser.write(send_str.encode())
@@ -134,6 +235,7 @@ class ArduinoSerial:
 
             msg = self.recv_from_arduino()
             print(msg)
+
 
 if __name__ == "__main__":
     arduino = ArduinoSerial()
