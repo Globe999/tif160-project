@@ -7,7 +7,8 @@ def dumb_but_optimized_inverse_kinematics(x, y, z):
     theta2_range = np.arange(-90, 91, 1) * np.pi / 180   # range for theta2 (0 to 90 degrees)
 
     # length parameters of robot
-    L2 = 0.315
+    L1 = 0.32
+    L2 = 0.055
     L3 = 0.045
     L4 = 0.108
     L5 = 0.005
@@ -36,6 +37,8 @@ def dumb_but_optimized_inverse_kinematics(x, y, z):
     x0 = np.cos(theta0_grid) * (x1 + L6) - np.sin(theta0_grid) * (-z1 - L4)
     y0 = np.sin(theta0_grid) * (x1 + L6) + np.cos(theta0_grid) * (-z1 - L4)
     z0 = y1 + (L2 + L3)
+    
+    z0 = z0+L1
 
     # Calculate Euclidean distance between all generated points and the target point
     dist = np.sqrt((x0 - x)**2 + (y0 - y)**2 + (z0 - z)**2)
