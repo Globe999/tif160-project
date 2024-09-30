@@ -59,17 +59,18 @@ def get_command(words):
                 
         return mode, instructions
     
+def get_instructions():
+    words = get_text()     
+    mode, order = get_command(words)
     
-words = get_text()     
-mode, order = get_command(words)
+    engine = pyttsx3.init()
+    # Define the text you want to convert to speech
+    text = "Ofcourse, i will sort by " + mode
+    # Convert the text to speech
+    engine.say(text)
 
-engine = pyttsx3.init()
+    # # Run the speech engine
+    engine.runAndWait()
+    return mode, order
 
-# Define the text you want to convert to speech
-text = "Ofcourse, i will sort by " + mode
-print(text)
-# Convert the text to speech
-engine.say(text)
 
-# # Run the speech engine
-engine.runAndWait()
