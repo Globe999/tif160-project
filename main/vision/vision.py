@@ -4,7 +4,7 @@ from typing import List
 
 @dataclass
 class CameraDetection:
-    type: str
+    shape: str
     x: float
     y: float
     z: float
