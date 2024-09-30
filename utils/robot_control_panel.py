@@ -23,6 +23,8 @@ class ControlPanel(tk.Tk):
             self.create_column(i)
         
         self.create_controls()
+        self.create_info_panel()
+        self.enable_buttons()
 
     def create_column(self, col_index):
         frame = ttk.Frame(self.columns_frame)
@@ -50,6 +52,12 @@ class ControlPanel(tk.Tk):
         self.buttons.append(plus_10_button)
         self.buttons.append(minus_10_button)
         self.buttons.append(minus_100_button)
+
+    def create_info_panel(self):
+        
+        frame = ttk.Frame(self.columns_frame)
+        frame.grid(row=0, column=0, padx=10)
+
 
     def create_controls(self):
         controls_frame = ttk.Frame(self)
@@ -94,7 +102,27 @@ class ControlPanel(tk.Tk):
         kinematics_button = ttk.Button(kinematics_frame, text="Calculate Inverse Kinematics", command=self.call_inverse_kinematics)
         kinematics_button.grid(row=3, columnspan=2)
         self.buttons.append(kinematics_button)
+        
+        gripper_frame = ttk.Frame(controls_frame)
+        gripper_frame.grid(row=0, column=2, padx=10)
 
+        open_gripper_button = ttk.Button(gripper_frame, text="Open Gripper", command=self.open_gripper)
+        open_gripper_button.grid(row=0, column=0, pady=5)
+        self.buttons.append(open_gripper_button)
+
+        close_gripper_button = ttk.Button(gripper_frame, text="Close Gripper", command=self.close_gripper)
+        close_gripper_button.grid(row=1, column=0, pady=5)
+        self.buttons.append(close_gripper_button)
+        
+
+
+    def open_gripper(self):
+        # Implement the logic to open the gripper
+        self.arduino.open_gripper()
+
+    def close_gripper(self):
+        # Implement the logic to close the gripper
+        self.arduino.close_gripper()
     def set_angles(self):
         body_angle = float(self.body_angle_entry.get())
         shoulder_angle = float(self.shoulder_angle_entry.get())
@@ -107,7 +135,8 @@ class ControlPanel(tk.Tk):
         print("Body - Angle ", self.arduino.servos[self.arduino.BODY].angle, "Pos:", self.arduino.servos[self.arduino.BODY].position)
         print("Shoulder - Angle ", self.arduino.servos[self.arduino.SHOULDER].angle, "Pos:", self.arduino.servos[self.arduino.SHOULDER].position)
         print("Elbow - Angle ", self.arduino.servos[self.arduino.ELBOW].angle, "Pos:", self.arduino.servos[self.arduino.ELBOW].position)
-
+        
+        self.update_labels()
         self.disable_buttons()
         self.arduino.send_to_arduino(wait_for_reply=True)
         self.enable_buttons()
@@ -128,25 +157,23 @@ class ControlPanel(tk.Tk):
         print("Body - Angle ", self.arduino.servos[self.arduino.BODY].angle, "Pos:", self.arduino.servos[self.arduino.BODY].position)
         print("Shoulder - Angle ", self.arduino.servos[self.arduino.SHOULDER].angle, "Pos:", self.arduino.servos[self.arduino.SHOULDER].position)
         print("Elbow - Angle ", self.arduino.servos[self.arduino.ELBOW].angle, "Pos:", self.arduino.servos[self.arduino.ELBOW].position)
-
+        self.update_labels()
         self.disable_buttons()
         self.arduino.send_to_arduino(wait_for_reply=True)
         self.enable_buttons()
         
         
-        # print(self.arduino.servos[self.arduino.BODY].position)
-        # print(self.arduino.servos[self.arduino.SHOULDER].position)
-        # print(self.arduino.servos[self.arduino.ELBOW].position)
-        # self.disable_buttons()
-        # self.arduino.send_to_arduino(wait_for_reply=True)
-        # self.enable_buttons()
-        
+    def update_labels(self):
+        for i in range(6):
+            self.values[i].set(self.arduino.servos[i].position)
+        print("Labels updated")
 
 
     def increment(self, col_index, amount):
-        new_value = self.values[col_index].get() + amount
+        new_value = self.arduino.servos[col_index].position + amount
         self.values[col_index].set(new_value)
         self.arduino.servos[col_index].position = new_value
+        self.update_labels()
         self.disable_buttons()
         self.arduino.send_to_arduino(wait_for_reply=True)
         self.enable_buttons()
@@ -154,9 +181,12 @@ class ControlPanel(tk.Tk):
 
 
     def decrement(self, col_index, amount):
-        new_value = self.values[col_index].get() - amount
+        # new_value = self.values[col_index].get() - amount
+        new_value = self.arduino.servos[col_index].position - amount
         self.values[col_index].set(new_value)
         self.arduino.servos[col_index].position = new_value
+        
+        self.update_labels()
         self.disable_buttons()
         self.arduino.send_to_arduino(wait_for_reply=True)
         self.enable_buttons()
