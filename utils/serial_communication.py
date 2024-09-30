@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from typing import List
+import numpy as np
 import serial
 import time
 
@@ -45,6 +46,23 @@ class Servo:
             value = value + 90
 
         pos = span * value + self.min
+        if self._inversed:
+            half = int((self.max - self.min) / 2 + self.min)
+            
+            if  pos < half:
+                diff = half - pos
+                
+                pos = half + diff            
+            else:
+                diff = pos - half
+                pos = half - diff
+            
+            
+            # if value < half:
+            #     value = (half - value) * 2 + value
+            # else:
+            #     value = value - (value - half) * 2
+
         self.position = pos
 
     @property
@@ -53,33 +71,16 @@ class Servo:
 
     @position.setter
     def position(self, value):
-        if self._inversed:
-            half = int((self.max - self.min) / 2 + self.min)
-            
-            if  value < half:
-                diff = half - value
-                
-                value = half + diff            
-            else:
-                diff = value - half
-                value = half - diff
-            
-            
-            # if value < half:
-            #     value = (half - value) * 2 + value
-            # else:
-            #     value = value - (value - half) * 2
-
-        value = value + self.offset
+        
 
         if value < self.min:
             print("Warn: Value less than min - ", self.name)
-            self._position = self.min
+            self._position = self.min + self.offset
         elif value > self.max:
             print("Warn: Value greater than max - ", self.name)
-            self._position = self.max
+            self._position = self.max + self.offset
         else:
-            self._position = int(value)
+            self._position = int(value) + self.offset
 
 
 class ArduinoSerial:
@@ -93,6 +94,7 @@ class ArduinoSerial:
         self.ELBOW = 4
         self.GRIPPER = 5
         self._gripper_open = False
+        self.position = np.array([0.11,-0.11,0])
 
         self.servos: List[Servo] = [
             Servo(
