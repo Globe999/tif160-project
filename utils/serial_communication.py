@@ -48,16 +48,15 @@ class Servo:
         pos = span * value + self.min
         if self._inversed:
             half = int((self.max - self.min) / 2 + self.min)
-            
-            if  pos < half:
+
+            if pos < half:
                 diff = half - pos
-                
-                pos = half + diff            
+
+                pos = half + diff
             else:
                 diff = pos - half
                 pos = half - diff
-            
-            
+
             # if value < half:
             #     value = (half - value) * 2 + value
             # else:
@@ -71,7 +70,6 @@ class Servo:
 
     @position.setter
     def position(self, value):
-        
 
         if value < self.min:
             print("Warn: Value less than min - ", self.name)
@@ -94,7 +92,7 @@ class ArduinoSerial:
         self.ELBOW = 4
         self.GRIPPER = 5
         self._gripper_open = False
-        self.position = np.array([0.11,-0.11,0])
+        self.position = np.array([0.11, -0.11, 0])
 
         self.servos: List[Servo] = [
             Servo(
@@ -103,7 +101,7 @@ class ArduinoSerial:
                 max=2330,
                 name="body",
                 only_positive_angle=False,
-                inversed=False,
+                inversed=True,
                 offset=330,
             ),
             Servo(
@@ -157,21 +155,21 @@ class ArduinoSerial:
         self.end_marker = 62  # ASCII '>'
         self.connect()
         self.wait_for_arduino()
-        self.send_to_arduino()
+        self.send_to_arduino(wait_for_reply=True)
 
     @property
     def gripper_open(self):
         return self._gripper_open
-    
+
     def open_gripper(self):
         self._gripper_open = True
         self.servos[self.GRIPPER].position = 750
-        self.send_to_arduino()
-    
+        self.send_to_arduino(wait_for_reply=True)
+
     def close_gripper(self):
         self._gripper_open = False
         self.servos[self.GRIPPER].position = 1050
-        self.send_to_arduino()
+        self.send_to_arduino(wait_for_reply=True)
 
     def connect(self):
         try:
@@ -181,7 +179,7 @@ class ArduinoSerial:
             print("Trying other port...")
             self.serPort = "/dev/ttyACM1"
             self.ser = serial.Serial(self.serPort, self.baud)
-        
+
         print("Serial port " + self.serPort + " opened  Baudrate " + str(self.baud))
 
     def close(self):
@@ -194,8 +192,6 @@ class ArduinoSerial:
         servo_positions = ",".join([f"{servo.position:04d}" for servo in self.servos])
         send_str += servo_positions
         send_str += chr(self.end_marker)
-
-        print(self.start_marker)
         print(f"Sent from PC -- {send_str}")
         self.ser.write(send_str.encode())
 
@@ -208,6 +204,11 @@ class ArduinoSerial:
             return dataRecvd
         else:
             return True
+
+    def set_angles(self, angles):
+        self.servos[self.BODY].angle = angles[0]
+        self.servos[self.SHOULDER].angle = angles[1]
+        self.servos[self.ELBOW].angle = angles[2]
 
     def recv_from_arduino(self):
         ck = ""
