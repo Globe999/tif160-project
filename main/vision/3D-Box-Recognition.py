@@ -60,4 +60,6 @@ while True:
     combined_detected = cv2.addWeighted(combined_detected, 1, green_detected, 1, 0)
     combined_detected = cv2.addWeighted(combined_detected, 1, white_detected, 1, 0)
 
+    test
+
         
