@@ -23,6 +23,7 @@ class ControlPanel(tk.Tk):
             self.create_column(i)
         
         self.create_controls()
+        self.create_info_panel()
         self.enable_buttons()
 
     def create_column(self, col_index):
@@ -51,6 +52,12 @@ class ControlPanel(tk.Tk):
         self.buttons.append(plus_10_button)
         self.buttons.append(minus_10_button)
         self.buttons.append(minus_100_button)
+
+    def create_info_panel(self):
+        
+        frame = ttk.Frame(self.columns_frame)
+        frame.grid(row=0, column=0, padx=10)
+
 
     def create_controls(self):
         controls_frame = ttk.Frame(self)
