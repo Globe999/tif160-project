@@ -3,130 +3,91 @@ import pyttsx3
 # for index, name in enumerate(sr.Microphone.list_microphone_names()):
 #     print(f'{index}, {name}')
 
-
-def get_text():
-    
-    r = sr.Recognizer()
-    mic = sr.Microphone(device_index=1)
-
-    with mic as source:
-        print("Speak Anything!")
-        audio = r.listen(source,timeout=2,phrase_time_limit=10)
-    #load in audiofile
-
-    #use googles text to speech to get text
-    text = r.recognize_google(audio,show_all=True)['alternative'][0]
-    words = text['transcript'].lower().split()
-    print(words)
-    return words
-
-def get_mode(modes):
-    
-    
-    engine = pyttsx3.init()
-    # Define the text you want to convert to speech
-    text = "What mode should i sort by"
-    # Convert the text to speech
-    engine.say(text)
-
-    # # Run the speech engine
-    engine.runAndWait()
-    
-    r = sr.Recognizer()
-    mic = sr.Microphone(device_index=1)
-    while True:
-        with mic as source:
+class AudioInterface():
+    def __init__(self) -> None:
+        self.mic = sr.Microphone(device_index=1)
+        self.r = sr.Recognizer()
+        self.engine = pyttsx3.init()
+        self.mode = ""
+        self.instructions = []
+        
+    def take_audio_input(self):
+        
+        with self.mic as source:
             print("Speak Anything!")
-            audio = r.listen(source,timeout=2,phrase_time_limit=10)
+            audio = self.r.listen(source,timeout=2,phrase_time_limit=10)
         #load in audiofile
 
         #use googles text to speech to get text
-        text = r.recognize_google(audio,show_all=True)['alternative'][0]
+        text = self.r.recognize_google(audio,show_all=True)['alternative'][0]
         words = text['transcript'].lower().split()
+        return words
     
-        for mode in modes:
-            if mode in words:
-                text = "Ok, i will sort by " + mode
-        # Convert the text to speech
-                engine.say(text)
-
-                # # Run the speech engine
-                engine.runAndWait()
-                return mode
+    def output_audio(self,string):
+        self.engine.say(string)
+        self.engine.runAndWait()
         
-        text = "Please repeat what mode you want"
-        # Convert the text to speech
-        engine.say(text)
-
-        # # Run the speech engine
-        engine.runAndWait()
-
-
-def get_command(mode):
-    
-    shapes = ["cube","star","hexagon"]
-    colors = ["red","green","blue"]
-    size = ["big","small"]
-    instructions = []
-    
-    engine = pyttsx3.init()
-    # Define the text you want to convert to speech
-    text = "In what order shall i sort by " + mode
-    # Convert the text to speech
-    engine.say(text)
-
-    # # Run the speech engine
-    engine.runAndWait()
-    
-    r = sr.Recognizer()
-    mic = sr.Microphone(device_index=1)
-    while True:
-        with mic as source:
-            print("Speak Anything!")
-            audio = r.listen(source,timeout=2,phrase_time_limit=10)
-            
-        text = r.recognize_google(audio,show_all=True)['alternative'][0]
-        words = text['transcript'].lower().split()
+    def get_mode(self,modes):
         
-        for word in words:
-            if mode == "shape" and word in shapes:
-                instructions.append(word)
-            elif mode == "size" and word in size:
-                instructions.append(word)
-            elif mode == "color" and word in colors:
-                instructions.append(word)
+        self.output_audio("What mode should i sort by")
+        
+        while True:
+            words = self.take_audio_input()
+        
+            for mode in modes:
+                if mode in words:
+                    self.output_audio("Ok, i will sort by " + mode)
+                    return mode
                 
-        if len(instructions):
-            text = "Order set to "+ ", ".join(instructions) 
+            self.output_audio("Please repeat what mode you want")
+
+
+    def get_command(self,mode):
         
-            engine.say(text)
-            engine.runAndWait()
-            return instructions
+        shapes = ["cube","star","hexagon"]
+        colors = ["red","green","blue"]
+        size = ["big","small"]
+        instructions = []
         
-        text = "Please repeat what order you want"
+        
+        # Define the text you want to convert to speech
         # Convert the text to speech
-        engine.say(text)
+        self.output_audio("In what order shall i sort by " + mode)
+        
+        
+        while True:
+            words = self.take_audio_input()
+            
+            for word in words:
+                if mode == "shape" and word in shapes:
+                    instructions.append(word)
+                elif mode == "size" and word in size:
+                    instructions.append(word)
+                elif mode == "color" and word in colors:
+                    instructions.append(word)
+                    
+            if len(instructions):
+                text = "Order set to "+ ", ".join(instructions) 
+            
+                self.output_audio(text)
+                return instructions
+            
+            self.output_audio("Please repeat what order you want")
 
-        # # Run the speech engine
-        engine.runAndWait()
-
-    
-def get_instructions():
-    words = get_text()     
-    mode, order = get_command(words)
-    
-    engine = pyttsx3.init()
-    # Define the text you want to convert to speech
-    text = "Ofcourse, i will sort by " + mode
-    # Convert the text to speech
-    engine.say(text)
-
-    # # Run the speech engine
-    engine.runAndWait()
-    return mode, order
+        
+    def get_instructions(self):
+        words = self.take_audio_input()     
+        mode, order = self.get_command(words)
+        
+        
+        # Define the text you want to convert to speech
+        text = "Ofcourse, i will sort by " + mode
+        # Convert the text to speech
+        self.output_audio(text)
+        return mode, order
 
 
-mode = get_mode(["shape","size","color"])
-instructions = get_command(mode)
-print(mode)
-print(instructions)
+# mode = get_mode(["shape","size","color"])
+# instructions = get_command(mode)
+# print(mode)
+# print(instructions)
