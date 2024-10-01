@@ -82,13 +82,40 @@ else:
         contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         contours_data[color] = contours
 
+
     # Process and draw contours
     for color, contours in contours_data.items():
         for contour in contours:
             if cv2.contourArea(contour) > 2000:  
                 x, y, w, h = cv2.boundingRect(contour)
-                cv2.rectangle(foreground, (x, y), (x + w, y + h), (0, 255, 0), 2)
-                cv2.putText(foreground, color, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+
+                # Approximate the contour to reduce the number of vertices
+                epsilon = 0.04 * cv2.arcLength(contour, True)
+                approx = cv2.approxPolyDP(contour, epsilon, True)
+                vertices = len(approx)
+
+                # Shape classification
+                shape = "Unknown"
+                if vertices == 6:
+                    shape = "Hexagon"
+                elif vertices == 4:
+                    aspect_ratio = float(w) / h
+                    shape = "Cube" if 0.9 < aspect_ratio < 1.2 else "Rectangle"
+                elif vertices > 20:
+                    area = cv2.contourArea(contour)
+                    perimeter = cv2.arcLength(contour, True)
+                    circularity = (4 * np.pi * area) / (perimeter ** 2)
+                    if circularity > 0.8:  # Adjust circularity threshold as needed
+                        shape = "Cylinder"
+                    else:
+                        shape = "Star Prism"
+                else:
+                    if vertices > 8:
+                        shape = "Star Prism"  # Check for irregular star-like shapes
+
+                # Draw the shape and label it
+                cv2.drawContours(foreground, [contour], -1, (0, 255, 0), 2)
+                cv2.putText(foreground, f"{color} {shape}", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
 
     # Display the result
     cv2.imshow("Detected Shapes", foreground)
