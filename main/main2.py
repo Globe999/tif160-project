@@ -1,8 +1,11 @@
+import os
 import random
 from typing import List
-from main.speech.speech_to_instructions import AudioInterface
-from main.vision.vision import CameraDetection
 
+import sys
+
+from speech.speech_to_instructions import AudioInterface
+from vision.vision import CameraDetection
 
 def get_sorted_objects(sort_mode, order, objects):
     # Magic
@@ -41,6 +44,7 @@ def mock_get_objects() -> List[CameraDetection]:
 
 
 def main():
+    sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
     mock_data = mock_get_objects()
 
@@ -54,7 +58,7 @@ def main():
 
     mode = audio_interface.get_mode(available_sort_modes)
 
-    order = audio_interface.get_instructions()
+    order = audio_interface.get_command(mode)
 
     # sort_mode = "color"
     # order = ["red", "green"]

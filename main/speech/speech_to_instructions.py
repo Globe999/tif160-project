@@ -49,10 +49,11 @@ class AudioInterface:
         colors = ["red", "green", "blue"]
         size = ["big", "small"]
         instructions = []
-
+        print("get instructions")
         # Define the text you want to convert to speech
         # Convert the text to speech
-        self.output_audio("In what order shall i sort by " + mode)
+        text = "In what order shall i sort by " + mode
+        self.output_audio(text)
 
         while True:
             words = self.take_audio_input()
@@ -73,15 +74,6 @@ class AudioInterface:
 
             self.output_audio("Please repeat what order you want")
 
-    def get_instructions(self):
-        words = self.take_audio_input()
-        mode, order = self.get_command(words)
-
-        # Define the text you want to convert to speech
-        text = "Ofcourse, i will sort by " + mode
-        # Convert the text to speech
-        self.output_audio(text)
-        return mode, order
 
 
 # mode = get_mode(["shape","size","color"])
