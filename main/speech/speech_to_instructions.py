@@ -22,8 +22,11 @@ class AudioInterface:
 
         # use googles text to speech to get text
         text = self.r.recognize_google(audio, show_all=True)["alternative"][0]
-        words = text["transcript"].lower().split()
-        return words
+        if text:   
+            words = text["transcript"].lower().split()
+            return words
+        else:
+            return 0
 
     def output_audio(self, string):
         self.engine.say(string)
@@ -35,36 +38,36 @@ class AudioInterface:
 
         while True:
             words = self.take_audio_input()
-
-            for mode in modes:
-                if mode in words:
-                    self.output_audio("Ok, i will sort by " + mode)
-                    return mode
+            if words:
+                for mode in modes:
+                    if mode in words:
+                        self.output_audio("Ok, i will sort by " + mode)
+                        return mode
 
             self.output_audio("Please repeat what mode you want")
 
     def get_command(self, mode):
 
-        shapes = ["cube", "star", "hexagon"]
-        colors = ["red", "green", "blue"]
+        shapes = ["cube", "star", "hexagon","cylinder"]
+        colors = ["red", "green", "blue","white"]
         size = ["big", "small"]
         instructions = []
         print("get instructions")
         # Define the text you want to convert to speech
         # Convert the text to speech
-        text = "In what order shall i sort by " + mode
+        text = "In what order shall i sort by " + mode 
         self.output_audio(text)
 
         while True:
             words = self.take_audio_input()
-
-            for word in words:
-                if mode == "shape" and word in shapes:
-                    instructions.append(word)
-                elif mode == "size" and word in size:
-                    instructions.append(word)
-                elif mode == "color" and word in colors:
-                    instructions.append(word)
+            if words:
+                for word in words:
+                    if mode == "shape" and word in shapes:
+                        instructions.append(word)
+                    elif mode == "size" and word in size:
+                        instructions.append(word)
+                    elif mode == "color" and word in colors:
+                        instructions.append(word)
 
             if len(instructions):
                 text = "Order set to " + ", ".join(instructions)
