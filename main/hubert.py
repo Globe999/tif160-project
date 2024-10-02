@@ -1,3 +1,4 @@
+import time
 import numpy as np
 from main.kinematics.inverse_kinematics_dummy import (
     dumb_but_optimized_inverse_kinematics,
@@ -50,10 +51,14 @@ class Hubert:
         self.arduino.open_gripper()
         self.angles = (self.angles[0], theta2, self.angles[2])
         # Close gripper
+        time.sleep(2)
         self.arduino.close_gripper()
 
         # Raise arm
-        self.angles = (self.angles[0], 90, -85)
+        print("Here1")
+        self.angles = (self.angles[0], 90, self.angles[2])
+        print("Here2")
+        self.angles = (self.angles[0], self.angles[1], -85)
 
         return True
 
@@ -76,7 +81,8 @@ class Hubert:
         # Close gripper
 
         # Raise arm
-        self.angles = (self.angles[0], 90, -85)
+        self.angles = (self.angles[0], 90, self.angles[2])
+        self.angles = (self.angles[0], self.angles[1], -85)
         self.arduino.close_gripper()
 
         return True
@@ -85,5 +91,7 @@ class Hubert:
 if __name__ == "__main__":
     hubert = Hubert()
     print("HELLO")
-    hubert.action_pick_up(0.16, -0.11, 0.136)
-    hubert.action_drop_off(0.16, 0.11, 0.136)
+    hubert.action_pick_up(0.22, -0.11, 0)
+    hubert.action_drop_off(0.22, 0.11, 0)
+    hubert.action_pick_up(0.22, -0.11, 0)
+    hubert.action_drop_off(0.22, 0.11, 0.09)
