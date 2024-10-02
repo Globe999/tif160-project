@@ -1,132 +1,126 @@
 import cv2
 import numpy as np
 
-video_path = r'D:\Hiomanoid Robots\Project\final\tif160-project\main\vision\Test.mp4'
-cap = cv2.VideoCapture(video_path)
-if not cap.isOpened():
-    print("Error: Could not open camera.")
+image_path = r'D:\Hiomanoid Robots\Project\final\main\vision\test1.jpg'
+frame = cv2.imread(image_path)
+if frame is None:
+    print("Error: Could not open image.")
 else:
-    while True:
-        ret, frame = cap.read()
+    # Apply median filter to reduce noise
+    median_frame = cv2.GaussianBlur(frame, (3, 3), 0)
 
-        if not ret or frame is None:
-            print("Error: Failed to capture image from camera.")
-            break
+    # Convert the frame to HSV color space
+    hsv = cv2.cvtColor(median_frame, cv2.COLOR_BGR2HSV)
 
-        # Convert the frame to HSV color space and define color ranges for white, red, blue, and green
-        hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    # Define color ranges for white, red, blue, and green
+    color_ranges = {
+        'white': ((0, 0, 200), (180, 25, 255)),
+        'red': ((0, 100, 80), (10, 255, 255)),
+        #'red2': ((170, 120, 70), (180, 255, 255)),
+        'blue': ((100, 150, 70), (140, 255, 255)),
+        'green': ((40, 50, 50), (90, 255, 255))
+    }
 
-        color_ranges = {
-            'white': ((0, 0, 200), (180, 25, 255)),
-            'red1': ((0, 120, 70), (10, 255, 255)),
-            'red2': ((170, 120, 70), (180, 255, 255)),
-            'blue': ((100, 150, 0), (140, 255, 255)),
-            'green': ((40, 50, 50), (90, 255, 255))
-        }
+    mask_bright = cv2.inRange(hsv, (0, 0, 150), (180, 255, 255))
 
-        # Create masks for each color
-        masks = {}
-        for color, (lower, upper) in color_ranges.items():
-            masks[color] = cv2.inRange(hsv, lower, upper)
 
-        # Combine red masks for full red detection
-        masks['red'] = cv2.bitwise_or(masks['red1'], masks['red2'])
+    # Create masks for each color
+    masks = {}
+    for color, (lower, upper) in color_ranges.items():
+        mask = cv2.inRange(hsv, lower, upper)
+        if color != 'white':  # Apply brightness filter to all non-white
+            mask = cv2.bitwise_and(mask, mask_bright)
+        masks[color] = mask
+      #  Combine red masks for full red detection
+    #masks['red'] = cv2.bitwise_or(masks['red1'], masks['red2'])
 
-        # Define kernels for morphological operations
-        kernel_open = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
-        kernel_close = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
+    # Sharpen red mask specifically
+    kernel_sharpening = np.array([[-1, -1, -1], 
+                                [-1, 9, -1], 
+                                [-1, -1, -1]])
 
-        # Reduce noise with morphological operations
-        for color, mask in masks.items():
-            # Opening to remove small noise
-            masks[color] = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel_open, iterations=4)
-            # Closing to fill small holes in the object
-            masks[color] = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel_close, iterations=4)
-            # Apply median blur for smoothing
+    masks['red'] = cv2.filter2D(masks['red'], -1, kernel_sharpening)
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
 
-        # Combine all masks to create a foreground mask
-        combined_mask = np.zeros_like(masks['white'])
-        for color in ['white', 'red', 'blue', 'green']:
-            combined_mask = cv2.bitwise_or(combined_mask, masks[color])
 
-        # Apply the background mask to the frame to remove the background
-        foreground = cv2.bitwise_and(frame, frame, mask=combined_mask)
+    # Define kernels for morphological operations
+    # kernel_open = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
+    # kernel_close = cv2.getStructuringElement(cv2.MORPH_RECT, (7, 7))
 
-        # Find contours for each color mask
-        contours_data = {}
-        for color, mask in masks.items():
-            contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-            contours_data[color] = contours
+    # Reduce noise with morphological operations
+    for color, mask in masks.items():
+        cv2.imshow(f"{color} Mask", mask)
 
-        # Process each detected contour and draw bounding boxes
-        detected_objects = []
-        for color, contours in contours_data.items():
-            for contour in contours:
-                # Filter out small contours to reduce noise
-                if cv2.contourArea(contour) > 1000:  
-                    # Get the bounding box coordinates
-                    x, y, w, h = cv2.boundingRect(contour)
-                    # Draw a rectangle around the detected object
-                    cv2.rectangle(foreground, (x, y), (x + w, y + h), (0, 255, 0), 2)
+        # Opening to remove small noise
+        masks[color] = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel, iterations=2)
+        # Closing to fill small holes in the object
+        masks[color] = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel, iterations=2)
+        # Visualize each color mask
+        cv2.imshow(f"{color} Mask", masks[color])
 
-                    # Get the center of the bounding box
-                    x_center = x + w // 2
-                    y_center = y + h // 2
+    for color, mask in masks.items():
+        cv2.imshow(f"{color} Mask", mask)  # Visualize each mask
 
-                    # Detect shape based on contour approximation
-                    shape = "unknown"
-                    epsilon = 0.02 * cv2.arcLength(contour, True)  # Fine-tuning epsilon
-                    approx = cv2.approxPolyDP(contour, epsilon, True)
-                    vertices = len(approx)
+    # Combine all masks to create a foreground mask
+    combined_mask = np.zeros_like(masks['white'])
+    for color in ['white', 'red', 'blue', 'green']:
+        combined_mask = cv2.bitwise_or(combined_mask, masks[color])
 
-                    # Classify the shape based on the number of vertices and angles
-                    if vertices == 10:
-                        shape = "Star Prism"
-                    elif vertices == 6:
-                        shape = "Hexagon"
-                    elif vertices == 4:
-                        # Check if the shape is a square or rectangle (cube in 2D)
-                        aspect_ratio = float(w) / h
-                        if 0.8 <= aspect_ratio <= 1.2:
-                            shape = "Cube"
-                    elif vertices > 8:
-                        # Check for convexity defects to identify stars
-                        hull = cv2.convexHull(contour)
-                        hull_area = cv2.contourArea(hull)
-                        area = cv2.contourArea(contour)
-                        if hull_area > 0:
-                            solidity = float(area) / hull_area
-                            if solidity < 0.9:
-                                shape = "Star Prism"
-                    elif vertices > 12:
-                        # Check for circularity to detect cylinder
-                        area = cv2.contourArea(contour)
-                        perimeter = cv2.arcLength(contour, True)
-                        if perimeter != 0:
-                            circularity = 4 * np.pi * (area / (perimeter ** 2))
-                            if circularity > 0.8:
-                                shape = "Cylinder"
-                            else:
-                                shape = "Circle"
+        cv2.imshow("Combined Mask", combined_mask)  # Add this after combining all color masks
+
+
+    # Apply the mask to the frame to remove the background
+    foreground = cv2.bitwise_and(frame, frame, mask=combined_mask)
+
+    # Apply Canny edge detection to the foreground
+    edges = cv2.Canny(foreground, 100, 200)
+    cv2.imshow('Edges', edges)
+
+    # Find contours for each color mask
+    contours_data = {}
+    for color, mask in masks.items():
+        contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        contours_data[color] = contours
+
+
+    # Process and draw contours
+    for color, contours in contours_data.items():
+        for contour in contours:
+            if cv2.contourArea(contour) > 2000:  
+                x, y, w, h = cv2.boundingRect(contour)
+
+                # Approximate the contour to reduce the number of vertices
+                epsilon = 0.04 * cv2.arcLength(contour, True)
+                approx = cv2.approxPolyDP(contour, epsilon, True)
+                vertices = len(approx)
+
+                # Shape classification
+                shape = "Unknown"
+                if vertices == 6:
+                    shape = "Hexagon"
+                elif vertices == 4:
+                    aspect_ratio = float(w) / h
+                    shape = "Cube" if 0.9 < aspect_ratio < 1.2 else "Rectangle"
+                elif vertices > 20:
+                    area = cv2.contourArea(contour)
+                    perimeter = cv2.arcLength(contour, True)
+                    circularity = (4 * np.pi * area) / (perimeter ** 2)
+                    if circularity > 0.8:  # Adjust circularity threshold as needed
+                        shape = "Cylinder"
                     else:
-                        shape = "Polygon"
+                        shape = "Star Prism"
+                else:
+                    if vertices > 8:
+                        shape = "Star Prism"  # Check for irregular star-like shapes
 
-                    # Put text on the frame indicating the color and shape
-                    cv2.putText(foreground, f"{color} {shape}", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+                # Draw the shape and label it
+                cv2.drawContours(foreground, [contour], -1, (0, 255, 0), 2)
+                cv2.putText(foreground, f"{color} {shape}", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
 
-                    # Store detected object data
-                    detected_objects.append({
-                        'color': color,
-                        'shape': shape,
-                        'coordinates': (x_center, y_center),
-                        'bounding_box': (x, y, w, h)
-                    })
+    # Display the result
+    cv2.imshow("Detected Shapes", foreground)
 
-        # Display the original frame with detections
-        cv2.imshow("Detected Shapes", foreground)
+    if cv2.waitKey(0) & 0xFF == ord('q'):
+        pass
 
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
-
-cap.release()
 cv2.destroyAllWindows()
