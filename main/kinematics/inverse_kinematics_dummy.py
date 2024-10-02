@@ -65,7 +65,7 @@ def dumb_but_optimized_inverse_kinematics(x, y, z):
 
 
 # # function to calculate point p
-def calc_kinematics(theta0, theta1, theta2, x3=0, y3=0, z3=0):
+def forward_kinematics(theta0, theta1, theta2, x3=0, y3=0, z3=0):
     L1 = 0.18
     L2 = 0.055
     L3 = 0.045

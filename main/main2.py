@@ -4,8 +4,11 @@ from typing import List
 
 import sys
 
+from main.hubert import Hubert
 from speech.speech_to_instructions import AudioInterface
+from utils.robot_control_panel import ControlPanel
 from vision.vision import CameraDetection
+
 
 def get_sorted_objects(sort_mode, order, objects):
     # Magic
@@ -46,26 +49,32 @@ def mock_get_objects() -> List[CameraDetection]:
 def main():
     sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-    mock_data = mock_get_objects()
+    hubert = Hubert()
 
-    available_sort_modes = ["shape", "color", "size"]
+    control_panel = ControlPanel(hubert)
 
-    available_colors = list({x.color for x in mock_data})
-    available_shapes = list({x.shape for x in mock_data})
-    available_sizes = list({x.size for x in mock_data})
+    control_panel.mainloop()
 
-    audio_interface = AudioInterface()
+    # mock_data = mock_get_objects()
 
-    mode = audio_interface.get_mode(available_sort_modes)
+    # available_sort_modes = ["shape", "color", "size"]
 
-    order = audio_interface.get_command(mode)
+    # available_colors = list({x.color for x in mock_data})
+    # available_shapes = list({x.shape for x in mock_data})
+    # available_sizes = list({x.size for x in mock_data})
 
-    # sort_mode = "color"
-    # order = ["red", "green"]
+    # audio_interface = AudioInterface()
 
-    new_list = get_sorted_objects(mode, order, mock_data)
-    for i, (old, new) in enumerate(zip(mock_data, new_list)):
-        print(f"{i}: {getattr(old,mode)} -> {getattr(new,mode)}")
+    # mode = audio_interface.get_mode(available_sort_modes)
+
+    # order = audio_interface.get_command(mode)
+
+    # # sort_mode = "color"
+    # # order = ["red", "green"]
+
+    # new_list = get_sorted_objects(mode, order, mock_data)
+    # for i, (old, new) in enumerate(zip(mock_data, new_list)):
+    #     print(f"{i}: {getattr(old,mode)} -> {getattr(new,mode)}")
 
     # sort_mode, order = get_instructions()
     # objects = camera.get_objects()

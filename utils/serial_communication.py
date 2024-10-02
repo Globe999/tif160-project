@@ -70,6 +70,7 @@ class Servo:
 
     @position.setter
     def position(self, value):
+        print("RECIEVED POSITION", value)
 
         if value < self.min:
             print("Warn: Value less than min - ", self.name)
@@ -79,6 +80,16 @@ class Servo:
             self._position = self.max + self.offset
         else:
             self._position = int(value) + self.offset
+
+    def increment_position(self, amount):
+        new_value = self._position + amount
+        if new_value < self.min:
+            print("Warn: Value less than min - ", self.name)
+            self._position = self.min
+        elif new_value > self.max:
+            print("Warn: Value greater than max - ", self.name)
+            self._position = self.max
+        self._position = new_value
 
 
 class ArduinoSerial:

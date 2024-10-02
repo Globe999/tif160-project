@@ -2,15 +2,14 @@ import time
 import numpy as np
 from main.kinematics.inverse_kinematics_dummy import (
     dumb_but_optimized_inverse_kinematics,
+    forward_kinematics,
 )
-from utils.robot_control_panel import ControlPanel
 from utils.serial_communication import ArduinoSerial
 
 
 class Hubert:
     def __init__(self):
         self.arduino = ArduinoSerial()
-        self.control_panel = ControlPanel(self.arduino)
         self.position = np.array([0.1, -0.1, 0.3])
         self._angles = np.array([0, 0, 0])
 
@@ -26,17 +25,15 @@ class Hubert:
 
     def update_position(self, x, y, z):
         self.position = np.array([x, y, z])
-        self.angles = self.arduino.inverse_kinematics(x, y, z)
-        self.control_panel.update_values(self.angles)
+        self.angles = self.inverse_kinematics(x, y, z)
 
     def update_angles(self, theta1, theta2, theta3):
         self.angles = theta1, theta2, theta3
-        self.position = self.arduino.forward_kinematics(theta1, theta2, theta3)
-        self.control_panel.update_values(self.angles)
+        self.position = self.forward_kinematics(theta1, theta2, theta3)
 
     def action_pick_up(self, x, y, z) -> bool:
         print("Picking up object at", x, y, z)
-        theta1, theta2, theta3 = dumb_but_optimized_inverse_kinematics(x, y, z)
+        theta1, theta2, theta3 = self.inverse_kinematics(x, y, z)
         print("Calculated angles", theta1, theta2, theta3)
 
         print("Moving to pick up object")
@@ -64,7 +61,7 @@ class Hubert:
 
     def action_drop_off(self, x, y, z):
         print("Dropping off object at", x, y, z)
-        theta1, theta2, theta3 = dumb_but_optimized_inverse_kinematics(x, y, z)
+        theta1, theta2, theta3 = self.inverse_kinematics(x, y, z)
         print("Calculated angles", theta1, theta2, theta3)
 
         print("Moving to drop off object")
@@ -86,6 +83,12 @@ class Hubert:
         self.arduino.close_gripper()
 
         return True
+
+    def inverse_kinematics(self, x, y, z):
+        return dumb_but_optimized_inverse_kinematics(x, y, z)
+
+    def forward_kinematics(self, theta1, theta2, theta3):
+        return forward_kinematics(theta1, theta2, theta3)
 
 
 if __name__ == "__main__":

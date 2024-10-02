@@ -58,7 +58,7 @@ class ShapeDetector:
 
 def main():
     # Open a connection to the video feed (0 is the default camera)
-    cap = cv2.VideoCapture(2)
+    cap = cv2.VideoCapture(0)
 
     if not cap.isOpened():
         print("Error: Could not open video feed.")

@@ -1,75 +1,94 @@
 import tkinter as tk
 from tkinter import ttk
-
-from main.kinematics.inverse_kinematics_dummy import (
-    dumb_but_optimized_inverse_kinematics,
-)
-from utils.serial_communication import ArduinoSerial
+from main.hubert import Hubert
 
 
 class ControlPanel(tk.Tk):
-    def __init__(self, arduino: ArduinoSerial = None):
+    def __init__(self, hubert: Hubert = None):
         super().__init__()
         self.title("Robot Control Panel")
         self.geometry("1280x300")
         self.buttons = []
-        self.columns_frame = ttk.Frame(self)
-        self.columns_frame.pack(padx=10, pady=10)
+        self.servo_frame = ttk.Frame(self)
+        self.servo_frame.pack(side=tk.LEFT, padx=10, pady=5)
 
-        if arduino is None:
-            self.arduino = ArduinoSerial()
+        if hubert is None:
+            self.hubert = Hubert()
         else:
-            self.arduino = arduino
-        self.values = [
-            tk.IntVar(value=self.arduino.servos[i].position) for i in range(6)
-        ]
+            self.hubert = hubert
 
-        for i in range(6):
-            self.create_column(i)
+        self.create_servo_controls()
 
         self.create_controls()
         self.create_info_panel()
+        self.update_info_panel()
         self.enable_buttons()
 
-    def create_column(self, col_index):
-        frame = ttk.Frame(self.columns_frame)
-        frame.grid(row=0, column=col_index, padx=10)
+    def create_servo_controls(self):
+        for col_index, servo in enumerate(self.hubert.arduino.servos):
+            frame = ttk.Frame(self.servo_frame)
+            frame.pack(pady=10)
 
-        label = ttk.Label(frame, text=f"Servo {self.arduino.servos[col_index].name}")
-        label.pack(side=tk.TOP)
+            label = ttk.Label(frame, text=f"Servo {servo.name}")
+            label.grid(row=0, column=0, columnspan=5, pady=(0, 1))
 
-        plus_100_button = ttk.Button(
-            frame, text="+100", command=lambda: self.increment(col_index, 100)
-        )
-        plus_100_button.pack(side=tk.TOP)
-
-        plus_10_button = ttk.Button(
-            frame, text="+10", command=lambda: self.increment(col_index, 10)
-        )
-        plus_10_button.pack(side=tk.TOP)
-
-        label_value = ttk.Label(frame, textvariable=self.values[col_index])
-        label_value.pack(side=tk.TOP)
-
-        minus_10_button = ttk.Button(
-            frame, text="-10", command=lambda: self.decrement(col_index, 10)
-        )
-        minus_10_button.pack(side=tk.TOP)
-
-        minus_100_button = ttk.Button(
-            frame, text="-100", command=lambda: self.decrement(col_index, 100)
-        )
-        minus_100_button.pack(side=tk.TOP)
-
-        self.buttons.append(plus_100_button)
-        self.buttons.append(plus_10_button)
-        self.buttons.append(minus_10_button)
-        self.buttons.append(minus_100_button)
+            for idx, value in enumerate([-100, -10, 10, 100]):
+                button = ttk.Button(
+                    frame,
+                    text=f"{value}",
+                    command=lambda idx=col_index, val=value: self.increment(idx, val),
+                )
+                button.grid(row=1, column=idx, padx=5)
+                self.buttons.append(button)
 
     def create_info_panel(self):
+        self.info_frame = ttk.Frame(self)
+        self.info_frame.pack(side=tk.TOP, padx=10, pady=5)
 
-        frame = ttk.Frame(self.columns_frame)
-        frame.grid(row=0, column=0, padx=10)
+        # XYZ coordinates
+        ttk.Label(self.info_frame, text="Current XYZ Coordinates:").grid(
+            row=0, column=0, columnspan=2
+        )
+        ttk.Label(self.info_frame, text="X:").grid(row=1, column=0)
+        self.current_x_label = ttk.Label(self.info_frame, text="0")
+        self.current_x_label.grid(row=1, column=1)
+
+        ttk.Label(self.info_frame, text=f"Y:").grid(row=2, column=0)
+        self.current_y_label = ttk.Label(self.info_frame, text="0")
+        self.current_y_label.grid(row=2, column=1)
+
+        ttk.Label(self.info_frame, text="Z:").grid(row=3, column=0)
+        self.current_z_label = ttk.Label(self.info_frame, text="0")
+        self.current_z_label.grid(row=3, column=1)
+
+        # Angles
+        ttk.Label(self.info_frame, text="Current Angles:").grid(
+            row=4, column=0, columnspan=2
+        )
+        ttk.Label(self.info_frame, text="Body:").grid(row=5, column=0)
+        self.current_body_angle_label = ttk.Label(self.info_frame, text="0")
+        self.current_body_angle_label.grid(row=5, column=1)
+
+        ttk.Label(self.info_frame, text="Shoulder:").grid(row=6, column=0)
+        self.current_shoulder_angle_label = ttk.Label(self.info_frame, text="0")
+        self.current_shoulder_angle_label.grid(row=6, column=1)
+
+        ttk.Label(self.info_frame, text="Elbow:").grid(row=7, column=0)
+        self.current_elbow_angle_label = ttk.Label(self.info_frame, text="0")
+        self.current_elbow_angle_label.grid(row=7, column=1)
+
+        # Servo positions
+        ttk.Label(self.info_frame, text="Current Servo Positions:").grid(
+            row=8, column=0, columnspan=2
+        )
+        self.current_servo_labels = []
+        for i, servo in enumerate(self.hubert.arduino.servos):
+            ttk.Label(self.info_frame, text=f"Servo {servo.name}:").grid(
+                row=9 + i, column=0
+            )
+            label = ttk.Label(self.info_frame, text="0")
+            label.grid(row=9 + i, column=1)
+            self.current_servo_labels.append(label)
 
     def create_controls(self):
         controls_frame = ttk.Frame(self)
@@ -116,7 +135,7 @@ class ControlPanel(tk.Tk):
         kinematics_button = ttk.Button(
             kinematics_frame,
             text="Calculate Inverse Kinematics",
-            command=self.call_inverse_kinematics,
+            command=self.set_position,
         )
         kinematics_button.grid(row=3, columnspan=2)
         self.buttons.append(kinematics_button)
@@ -137,105 +156,49 @@ class ControlPanel(tk.Tk):
         self.buttons.append(close_gripper_button)
 
     def open_gripper(self):
-        # Implement the logic to open the gripper
-        self.arduino.open_gripper()
+        self.hubert.open_gripper()
+        self.update_info_panel()
 
     def close_gripper(self):
-        # Implement the logic to close the gripper
-        self.arduino.close_gripper()
+        self.hubert.close_gripper()
+        self.update_info_panel()
+
+    def update_info_panel(self):
+        self.current_x_label.config(text=f"{self.hubert.position[0]:.3f}")
+        self.current_y_label.config(text=f"{self.hubert.position[1]:.3f}")
+        self.current_z_label.config(text=f"{self.hubert.position[2]:.3f}")
+
+        self.current_body_angle_label.config(text=f"{self.hubert.angles[0]:.3f}")
+        self.current_shoulder_angle_label.config(text=f"{self.hubert.angles[1]:.3f}")
+        self.current_elbow_angle_label.config(text=f"{self.hubert.angles[2]:.3f}")
+
+        for i, servo in enumerate(self.hubert.arduino.servos):
+            self.current_servo_labels[i].config(text=f"{servo.position:.3f}")
 
     def set_angles(self):
         body_angle = float(self.body_angle_entry.get())
         shoulder_angle = float(self.shoulder_angle_entry.get())
         elbow_angle = float(self.elbow_angle_entry.get())
 
-        self.arduino.servos[self.arduino.BODY].angle = body_angle
-        self.arduino.servos[self.arduino.SHOULDER].angle = shoulder_angle
-        self.arduino.servos[self.arduino.ELBOW].angle = elbow_angle
-
-        print(
-            "Body - Angle ",
-            self.arduino.servos[self.arduino.BODY].angle,
-            "Pos:",
-            self.arduino.servos[self.arduino.BODY].position,
-        )
-        print(
-            "Shoulder - Angle ",
-            self.arduino.servos[self.arduino.SHOULDER].angle,
-            "Pos:",
-            self.arduino.servos[self.arduino.SHOULDER].position,
-        )
-        print(
-            "Elbow - Angle ",
-            self.arduino.servos[self.arduino.ELBOW].angle,
-            "Pos:",
-            self.arduino.servos[self.arduino.ELBOW].position,
-        )
-
-        self.update_labels()
         self.disable_buttons()
-        self.arduino.send_to_arduino(wait_for_reply=True)
+        self.hubert.update_angles(body_angle, shoulder_angle, elbow_angle)
+        self.update_info_panel()
         self.enable_buttons()
 
-    def call_inverse_kinematics(self):
+    def set_position(self):
         x = float(self.x_entry.get())
         y = float(self.y_entry.get())
         z = float(self.z_entry.get())
-        print("Got x, y, z:", x, y, z)
-        theta1, theta2, theta3 = dumb_but_optimized_inverse_kinematics(x, y, z)
 
-        print(theta1, theta2, theta3)
-
-        self.arduino.servos[self.arduino.BODY].angle = float(theta1)
-        self.arduino.servos[self.arduino.SHOULDER].angle = float(theta2)
-        self.arduino.servos[self.arduino.ELBOW].angle = float(theta3)
-
-        print(
-            "Body - Angle ",
-            self.arduino.servos[self.arduino.BODY].angle,
-            "Pos:",
-            self.arduino.servos[self.arduino.BODY].position,
-        )
-        print(
-            "Shoulder - Angle ",
-            self.arduino.servos[self.arduino.SHOULDER].angle,
-            "Pos:",
-            self.arduino.servos[self.arduino.SHOULDER].position,
-        )
-        print(
-            "Elbow - Angle ",
-            self.arduino.servos[self.arduino.ELBOW].angle,
-            "Pos:",
-            self.arduino.servos[self.arduino.ELBOW].position,
-        )
-        self.update_labels()
         self.disable_buttons()
-        self.arduino.send_to_arduino(wait_for_reply=True)
+        self.hubert.update_position(x, y, z)
         self.enable_buttons()
-
-    def update_labels(self):
-        for i in range(6):
-            self.values[i].set(self.arduino.servos[i].position)
-        print("Labels updated")
+        self.update_info_panel()
 
     def increment(self, col_index, amount):
-        new_value = self.arduino.servos[col_index].position + amount
-        self.values[col_index].set(new_value)
-        self.arduino.servos[col_index].position = new_value
-        self.update_labels()
+        self.hubert.arduino.servos[col_index].increment_position(amount)
         self.disable_buttons()
-        self.arduino.send_to_arduino(wait_for_reply=True)
-        self.enable_buttons()
-
-    def decrement(self, col_index, amount):
-        # new_value = self.values[col_index].get() - amount
-        new_value = self.arduino.servos[col_index].position - amount
-        self.values[col_index].set(new_value)
-        self.arduino.servos[col_index].position = new_value
-
-        self.update_labels()
-        self.disable_buttons()
-        self.arduino.send_to_arduino(wait_for_reply=True)
+        self.hubert.arduino.send_to_arduino(wait_for_reply=True)
         self.enable_buttons()
 
     def disable_buttons(self):
