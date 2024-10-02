@@ -29,7 +29,7 @@ Servo gripper;
 //Init position of all servos
 const int servo_pins[] = {3, 9, 12, 6, 10, 5};
 
-const int pos_init[] = {1700, 1500, 2000, 2300, 1650, 1600};
+const int pos_init[] = {1700, 1500, 2000, 1500, 850, 1600};
 int curr_pos[6];
 int new_positions[6];
 
@@ -190,11 +190,12 @@ void init_robot_positions(){
   headTilt.attach(servo_pins[2]);
   headTilt.writeMicroseconds(pos_init[2]);
 
+	elbow.attach(servo_pins[4]);
+	elbow.writeMicroseconds(pos_init[4]);
+  
   shoulder.attach(servo_pins[3]);
 	shoulder.writeMicroseconds(pos_init[3]);
 
-	elbow.attach(servo_pins[4]);
-	elbow.writeMicroseconds(pos_init[4]);
 	
 	gripper.attach(servo_pins[5]);
   gripper.writeMicroseconds(pos_init[5]);
@@ -244,8 +245,8 @@ void loop() {
     servo_body_ex(new_positions[0]);
     servo_neck_pan(new_positions[1]);
     servo_neck_tilt(new_positions[2]);
-    servo_shoulder(new_positions[3]);
     servo_elbow(new_positions[4]);
+    servo_shoulder(new_positions[3]);
     servo_gripper_ex(new_positions[5]);
     showNewData();
     newData = false;

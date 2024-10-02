@@ -92,7 +92,6 @@ class ArduinoSerial:
         self.ELBOW = 4
         self.GRIPPER = 5
         self._gripper_open = False
-        self.position = np.array([0.11, -0.11, 0])
 
         self.servos: List[Servo] = [
             Servo(
@@ -123,7 +122,7 @@ class ArduinoSerial:
                 offset=0,
             ),
             Servo(
-                position=2300,
+                position=1500,
                 min=650,
                 max=2400,
                 name="shoulder",
@@ -132,7 +131,7 @@ class ArduinoSerial:
                 offset=0,
             ),
             Servo(
-                position=1650,
+                position=750,
                 min=600,
                 max=2300,
                 name="elbow",
@@ -150,6 +149,7 @@ class ArduinoSerial:
                 offset=0,
             ),
         ]
+        self.position = np.array([0.22, -0.11, 0.20])
         self.ser = None
         self.start_marker = 60  # ASCII '<'
         self.end_marker = 62  # ASCII '>'
