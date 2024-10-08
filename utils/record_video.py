@@ -1,10 +1,20 @@
 import numpy as np
 import cv2 as cv
 
+# Open the camera
 cap = cv.VideoCapture(2)
 if not cap.isOpened():
     print("Cannot open camera")
     exit()
+
+# Get the width and height of the frames
+frame_width = int(cap.get(cv.CAP_PROP_FRAME_WIDTH))
+frame_height = int(cap.get(cv.CAP_PROP_FRAME_HEIGHT))
+
+# Define the codec and create VideoWriter object
+fourcc = cv.VideoWriter_fourcc(*"mp4v")  # Codec for MP4
+out = cv.VideoWriter("output.mp4", fourcc, 20.0, (frame_width, frame_height))
+
 while True:
     # Capture frame-by-frame
     ret, frame = cap.read()
@@ -14,23 +24,15 @@ while True:
         print("Can't receive frame (stream end?). Exiting ...")
         break
 
-    # Get the dimensions of the frame
-    height, width, _ = frame.shape
+    # Write the frame into the file 'output.mp4'
+    out.write(frame)
 
-    # Calculate the center of the frame
-    center_y, center_x = height // 2, width // 2
-
-    for i in range(center_y - 3, center_y + 4):
-        for j in range(center_x - 3, center_x + 4):
-            frame[i, j] = [0, 255, 0]  # BGR format for green
-
-    # Our operations on the frame come here
-    # gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
     # Display the resulting frame
     cv.imshow("frame", frame)
     if cv.waitKey(1) == ord("q"):
         break
 
-# When everything done, release the capture
+# When everything done, release the capture and writer
 cap.release()
+out.release()
 cv.destroyAllWindows()

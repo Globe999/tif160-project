@@ -19,14 +19,14 @@ class CameraDetection:
 # image_path = r"D:\Hiomanoid Robots\Project\final\main\vision\test1.jpg"
 # frame = cv2.imread(image_path)
 
-video_path = r'D:\Hiomanoid Robots\Project\final\main\vision\output3.mp4'  # Make sure the path is correct for your video file
+video_path = r"D:\Hiomanoid Robots\Project\final\main\vision\output3.mp4"  # Make sure the path is correct for your video file
 
 # Open a connection to the camera (0 is usually the default camera)
 
 results = []
 
 
-cap = cv2.VideoCapture(video_path)
+cap = cv2.VideoCapture(2)
 while True:
     # Capture frame-by-frame
     ret, frame = cap.read()
@@ -36,15 +36,15 @@ while True:
         # Apply median filter to reduce noise
         median_frame = cv2.GaussianBlur(frame, (5, 5), 0)
 
-        # Convert the frame to HSV color space for color-based foreground masking 
+        # Convert the frame to HSV color space for color-based foreground masking
         # and Define color ranges for white, red, blue, and green
         hsv = cv2.cvtColor(median_frame, cv2.COLOR_BGR2HSV)
         color_ranges = {
-                'white': ((0, 0, 200), (180, 25, 255)),
-                'red': ((0, 100, 80), (20, 255, 255)),
-                'blue': ((100, 150, 70), (140, 255, 255)),
-                'green': ((40, 50, 50), (90, 255, 255))
-            }
+            "white": ((0, 0, 200), (180, 25, 255)),
+            "red": ((0, 100, 80), (20, 255, 255)),
+            "blue": ((100, 150, 70), (140, 255, 255)),
+            "green": ((40, 50, 50), (90, 255, 255)),
+        }
 
         mask_bright = cv2.inRange(hsv, (0, 0, 140), (180, 255, 255))
 
@@ -55,7 +55,6 @@ while True:
                 mask = cv2.bitwise_and(mask, mask_bright)
             masks[color] = mask
             cv2.imshow(f"{color.capitalize()} Mask", mask)
-
 
         # Create color masks
         # masks = {}
@@ -110,9 +109,10 @@ while True:
         edges_display = (edges * 255).astype(np.uint8)
         cv2.imshow("Canny Edges", edges_display)
 
-         # Find contours in the Canny edge-detected image
-        canny_contours, _ = cv2.findContours(edges_display, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
+        # Find contours in the Canny edge-detected image
+        canny_contours, _ = cv2.findContours(
+            edges_display, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
+        )
 
         # Draw the Canny contours (on the color foreground)
         for contour in canny_contours:
@@ -134,7 +134,7 @@ while True:
                 elif vertices > 0:
                     area = cv2.contourArea(contour)
                     perimeter = cv2.arcLength(contour, True)
-                    circularity = (4 * np.pi * area) / (perimeter ** 2)
+                    circularity = (4 * np.pi * area) / (perimeter**2)
                     if circularity > 0.8:
                         shape = "Cylinder"
                     else:
@@ -144,22 +144,33 @@ while True:
                         shape = "Star Prism"
 
                 # Draw the contour on the color foreground (in blue) and label it
-                cv2.drawContours(foreground, [contour], -1, (255, 0, 0), 2)  # Blue color for Canny contours
-                cv2.putText(foreground, f"{shape}", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
-                entry = CameraDetection(shape=shape, x=x+w/2, y=y+h/2, z=0, size=w*h, color="N/A")
+                cv2.drawContours(
+                    foreground, [contour], -1, (255, 0, 0), 2
+                )  # Blue color for Canny contours
+                cv2.putText(
+                    foreground,
+                    f"{shape}",
+                    (x, y - 10),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    0.5,
+                    (255, 255, 255),
+                    2,
+                )
+                entry = CameraDetection(
+                    shape=shape, x=x + w / 2, y=y + h / 2, z=0, size=w * h, color=color
+                )
                 results.append(entry)
         cv2.imshow("Foreground with Canny Contours", foreground)
 
-                
-        entry = CameraDetection(
-            shape=shape,
-            x=x + w / 2,
-            y=y + h / 2,
-            z=0,
-            size=w * h,
-            color=color,
-        )
-        results.append(entry)
+        # entry = CameraDetection(
+        #     shape=shape,
+        #     x=x + w / 2,
+        #     y=y + h / 2,
+        #     z=0,
+        #     size=w * h,
+        #     color=color,
+        # )
+        # results.append(entry)
         # Display the result
         cv2.imshow("Detected Shapes", foreground)
         print(results)
