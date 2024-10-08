@@ -60,35 +60,23 @@ def main():
     # control_panel.mainloop()
     camera = Camera(index=2)  # Use the correct index
 
-    camera_detections = {}
+    camera_detections: dict[int, List[CameraDetection]] = hubert.detect_objects(camera)
 
-    i = -40
-    hubert.update_angles(i, 90, -85)
-    print(f"Angle: {i}")
-    detections = camera.get_detected_objects()
-    res = camera.get_position(detections, i)
-    camera_detections[i] = res
+    print(camera_detections)
 
-    # for i in np.arange(-70, 70, 20, dtype=int):
-    #     hubert.update_angles(i, 90, -85)
-    #     print(f"Angle: {i}")
-    #     detections = camera.get_detected_objects()
-    #     res = camera.get_position(detections, i)
-    #     camera_detections[i] = res
-    # print(camera_detections)
+    # # Filter the detections to find the green object
+    # green_objects = [obj for obj in res if obj.color == "red"]
 
-    # Filter the detections to find the green object
-    green_objects = [obj for obj in res if obj.color == "green"]
-
-    if green_objects:
-        # Pick up the first green object found
-        green_object = green_objects[0]
-        print(
-            f"Found green object at \nx:{green_object.x},\ny:{green_object.y},\nz:{green_object.z}"
-        )
-        hubert.action_pick_up(green_object.x, green_object.y, green_object.z + 0.02)
-    else:
-        print("No green objects found.")
+    # if green_objects:
+    #     # Pick up the first green object found
+    #     green_object = green_objects[0]
+    #     print(
+    #         f"Found green object at \nx:{green_object.x},\ny:{green_object.y},\nz:{green_object.z}"
+    #     )
+    #     hubert.action_pick_up(green_object.x, green_object.y, green_object.z + 0.02)
+    #     hubert.action_drop_off(0.22, 0.22, 0.04)
+    # else:
+    #     print("No green objects found.")
 
     # mock_data = mock_get_objects()
 

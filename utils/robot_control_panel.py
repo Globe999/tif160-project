@@ -1,28 +1,33 @@
 import tkinter as tk
 from tkinter import ttk
+from PIL import Image, ImageTk
+import cv2
+import threading
 from main.hubert import Hubert
+from main.vision.vision import Camera
 
 
 class ControlPanel(tk.Tk):
     def __init__(self, hubert: Hubert = None):
         super().__init__()
         self.title("Robot Control Panel")
-        self.geometry("1280x300")
+        self.geometry("1280x800")
         self.buttons = []
         self.servo_frame = ttk.Frame(self)
         self.servo_frame.pack(side=tk.LEFT, padx=10, pady=5)
-
+        self.camera = Camera(2)
         if hubert is None:
             self.hubert = Hubert()
         else:
             self.hubert = hubert
 
         self.create_servo_controls()
-
         self.create_controls()
         self.create_info_panel()
+        self.create_video_feed()
         self.update_info_panel()
         self.enable_buttons()
+        self.update_video_feed()
 
     def create_servo_controls(self):
         for col_index, servo in enumerate(self.hubert.arduino.servos):
@@ -36,7 +41,9 @@ class ControlPanel(tk.Tk):
                 button = ttk.Button(
                     frame,
                     text=f"{value}",
-                    command=lambda idx=col_index, val=value: self.increment(idx, val),
+                    command=lambda idx=col_index, val=value: self.run_in_thread(
+                        self.increment, idx, val
+                    ),
                 )
                 button.grid(row=1, column=idx, padx=5)
                 self.buttons.append(button)
@@ -111,7 +118,9 @@ class ControlPanel(tk.Tk):
         self.elbow_angle_entry.grid(row=2, column=1)
 
         angle_button = ttk.Button(
-            angle_frame, text="Set Angles", command=self.set_angles
+            angle_frame,
+            text="Set Angles",
+            command=lambda: self.run_in_thread(self.set_angles),
         )
         angle_button.grid(row=3, columnspan=2)
         self.buttons.append(angle_button)
@@ -135,7 +144,7 @@ class ControlPanel(tk.Tk):
         kinematics_button = ttk.Button(
             kinematics_frame,
             text="Calculate Inverse Kinematics",
-            command=self.set_position,
+            command=lambda: self.run_in_thread(self.set_position),
         )
         kinematics_button.grid(row=3, columnspan=2)
         self.buttons.append(kinematics_button)
@@ -144,16 +153,43 @@ class ControlPanel(tk.Tk):
         gripper_frame.grid(row=0, column=2, padx=10)
 
         open_gripper_button = ttk.Button(
-            gripper_frame, text="Open Gripper", command=self.open_gripper
+            gripper_frame,
+            text="Open Gripper",
+            command=lambda: self.run_in_thread(self.open_gripper),
         )
         open_gripper_button.grid(row=0, column=0, pady=5)
         self.buttons.append(open_gripper_button)
 
         close_gripper_button = ttk.Button(
-            gripper_frame, text="Close Gripper", command=self.close_gripper
+            gripper_frame,
+            text="Close Gripper",
+            command=lambda: self.run_in_thread(self.close_gripper),
         )
         close_gripper_button.grid(row=1, column=0, pady=5)
         self.buttons.append(close_gripper_button)
+
+        detect_objects_button = ttk.Button(
+            controls_frame,
+            text="Detect Objects",
+            command=lambda: self.run_in_thread(self.detect_objects),
+        )
+        detect_objects_button.grid(row=1, column=2, padx=10, pady=5)
+        self.buttons.append(detect_objects_button)
+
+    def create_video_feed(self):
+        self.video_frame = ttk.Frame(self)
+        self.video_frame.pack(side=tk.BOTTOM, anchor=tk.SE, padx=10, pady=10)
+        self.canvas = tk.Canvas(self.video_frame, width=640, height=480)
+        self.canvas.pack()
+
+    def update_video_feed(self):
+        frame = self.camera.grab_frame()
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        image = Image.fromarray(frame)
+        image = ImageTk.PhotoImage(image)
+        self.canvas.create_image(0, 0, anchor=tk.NW, image=image)
+        self.canvas.image = image
+        self.after(1, self.update_video_feed)
 
     def open_gripper(self):
         self.hubert.open_gripper()
@@ -208,6 +244,14 @@ class ControlPanel(tk.Tk):
     def enable_buttons(self):
         for button in self.buttons:
             button["state"] = "normal"
+
+    def detect_objects(self):
+        self.hubert.detect_objects(self.camera)
+        self.update_info_panel()
+
+    def run_in_thread(self, func, *args):
+        thread = threading.Thread(target=func, args=args)
+        thread.start()
 
 
 if __name__ == "__main__":

@@ -11,8 +11,12 @@ class CameraDetection:
     x: float
     y: float
     z: float
+    global_x: float
+    global_y: float
+    global_z: float
     size: int
     color: str
+    angle: int
 
 
 class Camera:
@@ -28,7 +32,7 @@ class Camera:
             raise Exception("Error: Could not open image.")
         return frame
 
-    def get_detected_objects(self, frame=None) -> List[CameraDetection]:
+    def get_detected_objects(self, angle: int, frame=None) -> List[CameraDetection]:
         if frame is None:
             frame = self.grab_frame()
 
@@ -148,23 +152,26 @@ class Camera:
                             z=0,
                             size=w * h,
                             color=color,
+                            global_x=0,
+                            global_y=0,
+                            global_z=0,
+                            angle=angle,
                         )
                         results.append(entry)
-            return results
+            return self.get_global_position(results, camera_angle=angle)
 
-    def get_position(self, objects: List[CameraDetection], camera_angle: int):
+    def get_global_position(self, objects: List[CameraDetection], camera_angle: int):
 
         # length_per_pixel_x = 0.071 * 2
         # length_per_pixel_y = 0.098 * 2
         mid_x_pos = 0.132
-        length_per_pixel_x = 0.3 * 2
-        length_per_pixel_y = 0.3 * 2
+        length_per_pixel_x = 0.1 * 2
+        length_per_pixel_y = 0.15 * 2
         for object in objects:
-            object.y = (
-                np.sin(np.deg2rad(camera_angle)) * mid_x_pos
-                + object.x * length_per_pixel_x
-            ) * -1
-            object.x = (
+            object.global_y = np.sin(np.deg2rad(camera_angle)) * mid_x_pos + (
+                object.x * length_per_pixel_x * -1
+            )
+            object.global_x = (
                 np.cos(np.deg2rad(camera_angle)) * mid_x_pos
                 + object.y * length_per_pixel_y
             )

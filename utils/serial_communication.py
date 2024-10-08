@@ -179,7 +179,8 @@ class ArduinoSerial:
 
     def close_gripper(self):
         self._gripper_open = False
-        self.servos[self.GRIPPER].position = 1050
+        self.servos[self.GRIPPER].position = 2050
+        # self.servos[self.GRIPPER].position = 1050
         self.send_to_arduino(wait_for_reply=True)
 
     def connect(self):

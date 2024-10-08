@@ -1,9 +1,11 @@
 import time
+from typing import List
 import numpy as np
 from main.kinematics.inverse_kinematics_dummy import (
     dumb_but_optimized_inverse_kinematics,
     forward_kinematics,
 )
+from main.vision.vision import Camera, CameraDetection
 from utils.serial_communication import ArduinoSerial
 
 
@@ -49,7 +51,7 @@ class Hubert:
         self.angles = (self.angles[0], self.angles[1], theta3)
         print("Opening gripper")
         self.arduino.open_gripper()
-        self.angles = (self.angles[0], theta2, self.angles[2])
+        self.angles = (self.angles[0] - 5, theta2 - 4, self.angles[2] - 4)
         # Close gripper
         time.sleep(2)
         self.arduino.close_gripper()
@@ -99,6 +101,14 @@ class Hubert:
 
     def open_gripper(self):
         self.arduino.open_gripper()
+
+    def detect_objects(self, camera: Camera) -> List[CameraDetection]:
+        self.set_camera_position()
+        camera_detections = []
+        for i in np.arange(-70, 70, 20, dtype=int):
+            self.update_angles(i, 90, -85)
+            camera_detections.extend(camera.get_detected_objects(angle=i))
+        return camera_detections
 
 
 if __name__ == "__main__":
