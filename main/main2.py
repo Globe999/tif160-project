@@ -4,7 +4,9 @@ from typing import List
 
 import sys
 
-from main.hubert import Hubert
+import cv2
+
+# from main.hubert import Hubert
 from speech.speech_to_instructions import AudioInterface
 from utils.robot_control_panel import ControlPanel
 from vision.vision import Camera, CameraDetection
@@ -54,10 +56,12 @@ def main():
     # control_panel = ControlPanel(hubert)
 
     # control_panel.mainloop()
+    camera = Camera(index=2)  # Use the correct index
 
-    camera = Camera()
     print("Here")
+    for i in np.arange(-70,70,5):
     result = camera.get_detected_objects()
+
     print(result)
     # mock_data = mock_get_objects()
 
