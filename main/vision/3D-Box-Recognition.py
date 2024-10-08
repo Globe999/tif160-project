@@ -13,20 +13,20 @@ class CameraDetection:
     size: int
     color: str
 
-image_path = r'D:\Hiomanoid Robots\Project\final\main\vision\test1.jpg'
-frame = cv2.imread(image_path)
 
-video_path = r'D:\Hiomanoid Robots\Project\final\main\vision\output3.mp4'  # Make sure the path is correct for your video file
+# image_path = r"D:\Hiomanoid Robots\Project\final\main\vision\test1.jpg"
+# frame = cv2.imread(image_path)
+
+video_path = r"Tests\output3.mp4"  # Make sure the path is correct for your video file
 
 # Open a connection to the camera (0 is usually the default camera)
 
 results = []
 
 
-
 cap = cv2.VideoCapture(video_path)
 while True:
-        # Capture frame-by-frame
+    # Capture frame-by-frame
     ret, frame = cap.read()
     if frame is None:
         print("Error: Could not open image.")
@@ -39,34 +39,30 @@ while True:
 
         # Define color ranges for white, red, blue, and green
         color_ranges = {
-            'white': ((0, 0, 200), (180, 25, 255)),
-            'red': ((0, 100, 80), (10, 255, 255)),
+            "white": ((0, 0, 200), (180, 25, 255)),
+            "red": ((0, 100, 80), (10, 255, 255)),
             #'red2': ((170, 120, 70), (180, 255, 255)),
-            'blue': ((100, 150, 70), (140, 255, 255)),
-            'green': ((40, 50, 50), (90, 255, 255))
+            "blue": ((100, 150, 70), (140, 255, 255)),
+            "green": ((40, 50, 50), (90, 255, 255)),
         }
 
         mask_bright = cv2.inRange(hsv, (0, 0, 140), (180, 255, 255))
-
 
         # Create masks for each color
         masks = {}
         for color, (lower, upper) in color_ranges.items():
             mask = cv2.inRange(hsv, lower, upper)
-            if color != 'white':  # Apply brightness filter to all non-white
+            if color != "white":  # Apply brightness filter to all non-white
                 mask = cv2.bitwise_and(mask, mask_bright)
             masks[color] = mask
         #  Combine red masks for full red detection
-        #masks['red'] = cv2.bitwise_or(masks['red1'], masks['red2'])
+        # masks['red'] = cv2.bitwise_or(masks['red1'], masks['red2'])
 
         # Sharpen red mask specifically
-        kernel_sharpening = np.array([[-1, -1, -1], 
-                                    [-1, 9, -1], 
-                                    [-1, -1, -1]])
+        kernel_sharpening = np.array([[-1, -1, -1], [-1, 9, -1], [-1, -1, -1]])
 
-        masks['red'] = cv2.filter2D(masks['red'], -1, kernel_sharpening)
+        masks["red"] = cv2.filter2D(masks["red"], -1, kernel_sharpening)
         kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
-
 
         # Define kernels for morphological operations
         # kernel_open = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
@@ -87,31 +83,33 @@ while True:
             cv2.imshow(f"{color} Mask", mask)  # Visualize each mask
 
         # Combine all masks to create a foreground mask
-        combined_mask = np.zeros_like(masks['white'])
-        for color in ['white', 'red', 'blue', 'green']:
+        combined_mask = np.zeros_like(masks["white"])
+        for color in ["white", "red", "blue", "green"]:
             combined_mask = cv2.bitwise_or(combined_mask, masks[color])
 
-            cv2.imshow("Combined Mask", combined_mask)  # Add this after combining all color masks
-
+            cv2.imshow(
+                "Combined Mask", combined_mask
+            )  # Add this after combining all color masks
 
         # Apply the mask to the frame to remove the background
         foreground = cv2.bitwise_and(frame, frame, mask=combined_mask)
 
         # Apply Canny edge detection to the foreground
         edges = cv2.Canny(foreground, 120, 200)
-        cv2.imshow('Edges', edges)
+        cv2.imshow("Edges", edges)
 
         # Find contours for each color mask
         contours_data = {}
         for color, mask in masks.items():
-            contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+            contours, _ = cv2.findContours(
+                mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
+            )
             contours_data[color] = contours
-
 
         # Process and draw contours
         for color, contours in contours_data.items():
             for contour in contours:
-                if cv2.contourArea(contour) > 2000:  
+                if cv2.contourArea(contour) > 2000:
                     x, y, w, h = cv2.boundingRect(contour)
 
                     # Approximate the contour to reduce the number of vertices
@@ -129,7 +127,7 @@ while True:
                     elif vertices > 20:
                         area = cv2.contourArea(contour)
                         perimeter = cv2.arcLength(contour, True)
-                        circularity = (4 * np.pi * area) / (perimeter ** 2)
+                        circularity = (4 * np.pi * area) / (perimeter**2)
                         if circularity > 0.8:  # Adjust circularity threshold as needed
                             shape = "Cylinder"
                         else:
@@ -140,14 +138,29 @@ while True:
 
                     # Draw the shape and label it
                     cv2.drawContours(foreground, [contour], -1, (0, 255, 0), 2)
-                    cv2.putText(foreground, f"{color} {shape}", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
-                    entry = CameraDetection(shape=shape, x=x+w/2, y=y+h/2, z=0, size=w*h, color=color)
+                    cv2.putText(
+                        foreground,
+                        f"{color} {shape}",
+                        (x, y - 10),
+                        cv2.FONT_HERSHEY_SIMPLEX,
+                        0.5,
+                        (255, 255, 255),
+                        2,
+                    )
+                    entry = CameraDetection(
+                        shape=shape,
+                        x=x + w / 2,
+                        y=y + h / 2,
+                        z=0,
+                        size=w * h,
+                        color=color,
+                    )
                     results.append(entry)
         # Display the result
         cv2.imshow("Detected Shapes", foreground)
         print(results)
         results = []
-        if cv2.waitKey(100) & 0xFF == ord('q'):
+        if cv2.waitKey(100) & 0xFF == ord("q"):
             pass
 
 cv2.destroyAllWindows()

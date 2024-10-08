@@ -173,7 +173,7 @@ class ControlPanel(tk.Tk):
         self.current_elbow_angle_label.config(text=f"{self.hubert.angles[2]:.3f}")
 
         for i, servo in enumerate(self.hubert.arduino.servos):
-            self.current_servo_labels[i].config(text=f"{servo.position:.3f}")
+            self.current_servo_labels[i].config(text=f"{servo.position}")
 
     def set_angles(self):
         body_angle = float(self.body_angle_entry.get())

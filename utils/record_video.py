@@ -1,28 +1,36 @@
-import cv2
+import numpy as np
+import cv2 as cv
 
-# Initialize video capture from device 2
-cap = cv2.VideoCapture(2)
-
-# Define the codec and create VideoWriter object
-fourcc = cv2.VideoWriter_fourcc(*"XVID")
-out = cv2.VideoWriter("output3.mp4", fourcc, 20.0, (640, 480))
-
-while cap.isOpened():
+cap = cv.VideoCapture(2)
+if not cap.isOpened():
+    print("Cannot open camera")
+    exit()
+while True:
+    # Capture frame-by-frame
     ret, frame = cap.read()
-    if ret:
-        # Write the frame to the video file
-        out.write(frame)
 
-        # Display the frame
-        cv2.imshow("frame", frame)
-
-        # Exit the loop if 'q' is pressed
-        if cv2.waitKey(1) & 0xFF == ord("q"):
-            break
-    else:
+    # if frame is read correctly ret is True
+    if not ret:
+        print("Can't receive frame (stream end?). Exiting ...")
         break
 
-# Release resources
+    # Get the dimensions of the frame
+    height, width, _ = frame.shape
+
+    # Calculate the center of the frame
+    center_y, center_x = height // 2, width // 2
+
+    for i in range(center_y - 3, center_y + 4):
+        for j in range(center_x - 3, center_x + 4):
+            frame[i, j] = [0, 255, 0]  # BGR format for green
+
+    # Our operations on the frame come here
+    # gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+    # Display the resulting frame
+    cv.imshow("frame", frame)
+    if cv.waitKey(1) == ord("q"):
+        break
+
+# When everything done, release the capture
 cap.release()
-out.release()
-cv2.destroyAllWindows()
+cv.destroyAllWindows()

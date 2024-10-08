@@ -38,7 +38,7 @@ class Hubert:
 
         print("Moving to pick up object")
         # Ensure we are not close to ground level.
-        self.angles = (theta1, 85, -85)
+        self.angles = (theta1, 90, -85)
 
         print(self.angles)
         print("Lowering arm")
@@ -66,14 +66,15 @@ class Hubert:
 
         print("Moving to drop off object")
         # Ensure we are not close to ground level.
-        self.angles = (theta1, 85, -85)
+        self.angles = (theta1, 90, -85)
 
         print(self.angles)
         print("Lowering arm")
         # Lower arm
         self.angles = (self.angles[0], self.angles[1], theta3)
-        print("Opening gripper")
         self.angles = (self.angles[0], theta2, self.angles[2])
+        print("Opening gripper")
+
         self.arduino.open_gripper()
         # Close gripper
 
@@ -90,11 +91,18 @@ class Hubert:
     def forward_kinematics(self, theta1, theta2, theta3):
         return forward_kinematics(theta1, theta2, theta3)
 
+    def close_gripper(self):
+        self.arduino.close_gripper()
+
+    def open_gripper(self):
+        self.arduino.open_gripper()
+
 
 if __name__ == "__main__":
     hubert = Hubert()
-    print("HELLO")
-    hubert.action_pick_up(0.22, -0.11, 0)
-    hubert.action_drop_off(0.22, 0.11, 0)
-    hubert.action_pick_up(0.22, -0.11, 0)
-    hubert.action_drop_off(0.22, 0.11, 0.09)
+    hubert.action_pick_up(0.22, -0.05, 0.06)
+    hubert.action_drop_off(0.22, 0.11, 0.04)
+    hubert.action_pick_up(0.20, -0.05, 0.04)
+    hubert.action_drop_off(0.20, 0.10, 0.08)
+    # hubert.action_pick_up(0.22, -0.11, 0.05)
+    # hubert.action_drop_off(0.22, 0.11, 0.08)

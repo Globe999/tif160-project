@@ -7,7 +7,7 @@ import sys
 from main.hubert import Hubert
 from speech.speech_to_instructions import AudioInterface
 from utils.robot_control_panel import ControlPanel
-from vision.vision import CameraDetection
+from vision.vision import Camera, CameraDetection
 
 
 def get_sorted_objects(sort_mode, order, objects):
@@ -49,12 +49,16 @@ def mock_get_objects() -> List[CameraDetection]:
 def main():
     sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-    hubert = Hubert()
+    # hubert = Hubert()
 
-    control_panel = ControlPanel(hubert)
+    # control_panel = ControlPanel(hubert)
 
-    control_panel.mainloop()
+    # control_panel.mainloop()
 
+    camera = Camera()
+    print("Here")
+    result = camera.get_detected_objects()
+    print(result)
     # mock_data = mock_get_objects()
 
     # available_sort_modes = ["shape", "color", "size"]
