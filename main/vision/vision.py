@@ -152,14 +152,22 @@ class Camera:
                         results.append(entry)
             return results
 
-    def get_position(self, objects, camera_angle):
+    def get_position(self, objects: List[CameraDetection], camera_angle: int):
 
-        mid_y_pos = 0.132
-        length_per_pixel_y = 0.071 * 2
-        length_per_pixel_x = 0.098 * 2
+        # length_per_pixel_x = 0.071 * 2
+        # length_per_pixel_y = 0.098 * 2
+        mid_x_pos = 0.132
+        length_per_pixel_x = 0.3 * 2
+        length_per_pixel_y = 0.3 * 2
         for object in objects:
-            object.x = np.sin(camera_angle) * mid_y_pos + object.x * length_per_pixel_x
-            object.y = np.cos(camera_angle) * mid_y_pos + object.y * length_per_pixel_y
+            object.y = (
+                np.sin(np.deg2rad(camera_angle)) * mid_x_pos
+                + object.x * length_per_pixel_x
+            ) * -1
+            object.x = (
+                np.cos(np.deg2rad(camera_angle)) * mid_x_pos
+                + object.y * length_per_pixel_y
+            )
 
         return objects
 

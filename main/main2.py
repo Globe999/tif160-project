@@ -5,8 +5,10 @@ from typing import List
 import sys
 
 import cv2
+import numpy as np
 
 # from main.hubert import Hubert
+from main.hubert import Hubert
 from speech.speech_to_instructions import AudioInterface
 from utils.robot_control_panel import ControlPanel
 from vision.vision import Camera, CameraDetection
@@ -51,18 +53,43 @@ def mock_get_objects() -> List[CameraDetection]:
 def main():
     sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-    # hubert = Hubert()
-
+    hubert = Hubert()
+    hubert.set_camera_position()
     # control_panel = ControlPanel(hubert)
 
     # control_panel.mainloop()
     camera = Camera(index=2)  # Use the correct index
 
-    print("Here")
-    for i in np.arange(-70,70,5):
-    result = camera.get_detected_objects()
+    camera_detections = {}
 
-    print(result)
+    i = -40
+    hubert.update_angles(i, 90, -85)
+    print(f"Angle: {i}")
+    detections = camera.get_detected_objects()
+    res = camera.get_position(detections, i)
+    camera_detections[i] = res
+
+    # for i in np.arange(-70, 70, 20, dtype=int):
+    #     hubert.update_angles(i, 90, -85)
+    #     print(f"Angle: {i}")
+    #     detections = camera.get_detected_objects()
+    #     res = camera.get_position(detections, i)
+    #     camera_detections[i] = res
+    # print(camera_detections)
+
+    # Filter the detections to find the green object
+    green_objects = [obj for obj in res if obj.color == "green"]
+
+    if green_objects:
+        # Pick up the first green object found
+        green_object = green_objects[0]
+        print(
+            f"Found green object at \nx:{green_object.x},\ny:{green_object.y},\nz:{green_object.z}"
+        )
+        hubert.action_pick_up(green_object.x, green_object.y, green_object.z + 0.02)
+    else:
+        print("No green objects found.")
+
     # mock_data = mock_get_objects()
 
     # available_sort_modes = ["shape", "color", "size"]

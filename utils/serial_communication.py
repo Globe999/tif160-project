@@ -115,7 +115,7 @@ class ArduinoSerial:
                 offset=330,
             ),
             Servo(
-                position=1500,
+                position=1450,
                 min=550,
                 max=2340,
                 name="camera_pan",
@@ -124,7 +124,7 @@ class ArduinoSerial:
                 offset=0,
             ),
             Servo(
-                position=2000,
+                position=1300,
                 min=950,
                 max=2400,
                 name="camera_tilt",
@@ -197,6 +197,11 @@ class ArduinoSerial:
         if self.ser and self.ser.is_open:
             self.ser.close()
             print("Serial port " + self.serPort + " closed")
+
+    def set_camera_position(self):
+        self.servos[self.CAMERA_PAN].position = 1450
+        self.servos[self.CAMERA_TILT].position = 1300
+        self.send_to_arduino(wait_for_reply=True)
 
     def send_to_arduino(self, wait_for_reply=False):
         send_str = chr(self.start_marker)

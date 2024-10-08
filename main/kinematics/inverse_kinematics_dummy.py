@@ -14,7 +14,7 @@ def dumb_but_optimized_inverse_kinematics(x, y, z):
     )  # range for theta2 (0 to 90 degrees)
 
     # length parameters of robot
-    L1 = 0.167
+    L1 = 0.14
     L2 = 0.055
     L3 = 0.045
     L4 = 0.108
@@ -66,7 +66,7 @@ def dumb_but_optimized_inverse_kinematics(x, y, z):
 
 # # function to calculate point p
 def forward_kinematics(theta0, theta1, theta2, x3=0, y3=0, z3=0):
-    L1 = 0.167
+    L1 = 0.14
     L2 = 0.055
     L3 = 0.045
     L4 = 0.108

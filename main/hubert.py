@@ -31,6 +31,9 @@ class Hubert:
         self.angles = theta1, theta2, theta3
         self.position = self.forward_kinematics(theta1, theta2, theta3)
 
+    def set_camera_position(self):
+        self.arduino.set_camera_position()
+
     def action_pick_up(self, x, y, z) -> bool:
         print("Picking up object at", x, y, z)
         theta1, theta2, theta3 = self.inverse_kinematics(x, y, z)
