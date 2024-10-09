@@ -61,7 +61,7 @@ def main():
     camera_detections: List[CameraDetection] = hubert.detect_objects(camera)
 
     print(camera_detections)
-    camera_detections = camera.merge_objects(camera_detections, 0.05)  # 5cm threshold
+    camera_detections = camera.merge_objects(camera_detections, threshold=0.02)
 
     mode = "color"
     # mode = AudioInterface.get_mode()
