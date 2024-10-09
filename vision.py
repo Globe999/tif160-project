@@ -308,16 +308,17 @@ class Camera:
 
         length_per_pixel_x = 0.071 * 2
         length_per_pixel_y = 0.098 * 2
+        mid_y_pos = -0.01
         mid_x_pos = 0.132
         # length_per_pixel_x = 0.1 * 2
         # length_per_pixel_y = 0.15 * 2
         for object in objects:
-            object.global_y = np.sin(np.deg2rad(camera_angle)) * mid_x_pos + (
+            object.global_y = np.sin(np.deg2rad(camera_angle)) * mid_x_pos + np.cos(np.deg2rad(camera_angle))*mid_y_pos + (
                 object.x * length_per_pixel_x * np.cos(np.deg2rad(camera_angle))
                 + object.y * length_per_pixel_y * np.sin(np.deg2rad(camera_angle))
             )
             object.global_x = (
-                np.cos(np.deg2rad(camera_angle)) * mid_x_pos
+                np.cos(np.deg2rad(camera_angle)) * mid_x_pos + np.sin(np.deg2rad(camera_angle))*mid_y_pos
                 + object.y * length_per_pixel_y * np.cos(np.deg2rad(camera_angle))
                 - object.x * length_per_pixel_x * np.sin(np.deg2rad(camera_angle))
             )
