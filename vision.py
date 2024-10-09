@@ -237,6 +237,7 @@ class Camera:
 
 
 # # Capture frame-by-frame
+
 # if frame is None:
 #     print("Error: Could not open image.")
 # else:
