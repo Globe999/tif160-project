@@ -19,7 +19,7 @@ class CameraDetection:
 # image_path = r"D:\Hiomanoid Robots\Project\final\main\vision\test1.jpg"
 # frame = cv2.imread(image_path)
 
-video_path = r"D:\Hiomanoid Robots\others\Project\output3.mp4"  # Make sure the path is correct for your video file
+video_path = r"D:\Hiomanoid Robots\others\Project\output2.mp4"  # Make sure the path is correct for your video file
 
 # Open a connection to the camera (0 is usually the default camera)
 
@@ -40,11 +40,11 @@ while True:
         # and Define color ranges for white, red, blue, and green
         hsv = cv2.cvtColor(median_frame, cv2.COLOR_BGR2HSV)
         color_ranges = {
-            "white": ((0, 0, 200), (180, 25, 255)),
-            "red": ((0, 100, 80), (20, 255, 255)),
-            "blue": ((100, 150, 70), (140, 255, 255)),
-            "green": ((40, 50, 50), (90, 255, 255)),
-        }
+                'white': ((0, 0, 200), (180, 20, 255)),
+                'red': ((0, 90, 80), (180, 255, 255)),
+                'blue': ((100, 120, 70), (140, 255, 255)),
+                'green': ((40, 100, 50), (90, 255, 255))
+            }
 
         mask_bright = cv2.inRange(hsv, (0, 0, 140), (180, 255, 255))
 
@@ -136,12 +136,12 @@ while True:
                 for color, mask in masks.items():
                     mask_region = mask[y:y+h, x:x+w]
                     non_zero_pixels = cv2.countNonZero(mask_region)
-                    if non_zero_pixels > 0.5 * mask_region.size:  # If more than 50% of the bounding box matches this color
+                    if non_zero_pixels > 0.4 * mask_region.size:  
                         shape_color = color
-                        break  # Assign the first detected color
+                        break  
 
                 # Draw the contour on the color foreground (in blue) and label it
-                cv2.drawContours(foreground, [contour], -1, (255, 0, 0), 2)  # Blue color for Canny contours
+                cv2.drawContours(foreground, [contour], -1, (255, 0, 0), 2)  
                 cv2.putText(foreground, f"{shape_color} {shape} ", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
                 entry = CameraDetection(shape=shape, x=x+w/2, y=y+h/2, z=0, size=w*h, color=shape_color)
                 results.append(entry)
