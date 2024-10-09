@@ -19,14 +19,14 @@ class CameraDetection:
 # image_path = r"D:\Hiomanoid Robots\Project\final\main\vision\test1.jpg"
 # frame = cv2.imread(image_path)
 
-video_path = r"D:\Hiomanoid Robots\Project\final\main\vision\output3.mp4"  # Make sure the path is correct for your video file
+video_path = r"D:\Hiomanoid Robots\others\Project\output3.mp4"  # Make sure the path is correct for your video file
 
 # Open a connection to the camera (0 is usually the default camera)
 
 results = []
 
 
-cap = cv2.VideoCapture(2)
+cap = cv2.VideoCapture(video_path)
 while True:
     # Capture frame-by-frame
     ret, frame = cap.read()
@@ -143,11 +143,27 @@ while True:
                     if vertices > 8:
                         shape = "Star Prism"
 
+                # Detect color in the bounding box
+                shape_color = "Unknown"
+                for color, mask in masks.items():
+                    mask_region = mask[y:y+h, x:x+w]
+                    non_zero_pixels = cv2.countNonZero(mask_region)
+                    if non_zero_pixels > 0.5 * mask_region.size:  # If more than 50% of the bounding box matches this color
+                        shape_color = color
+                        break  # Assign the first detected color
+                                    # Draw the contour on the color foreground (in blue) and label it
+                cv2.drawContours(foreground, [contour], -1, (255, 0, 0), 2)  # Blue color for Canny contours
+                cv2.putText(foreground, f"{shape_color} {shape} ", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+                entry = CameraDetection(shape=shape, x=x+w/2, y=y+h/2, z=0, size=w*h, color=shape_color)
+                results.append(entry)
+        cv2.imshow("Foreground with Canny Contours", foreground)
+        print(results)
+
                 # Draw the contour on the color foreground (in blue) and label it
-                cv2.drawContours(
+        cv2.drawContours(
                     foreground, [contour], -1, (255, 0, 0), 2
                 )  # Blue color for Canny contours
-                cv2.putText(
+        cv2.putText(
                     foreground,
                     f"{shape}",
                     (x, y - 10),
@@ -156,11 +172,11 @@ while True:
                     (255, 255, 255),
                     2,
                 )
-                entry = CameraDetection(
+        entry = CameraDetection(
                     shape=shape, x=x + w / 2, y=y + h / 2, z=0, size=w * h, color=color
                 )
-                results.append(entry)
-        cv2.imshow("Foreground with Canny Contours", foreground)
+        results.append(entry)
+        # cv2.imshow("Foreground with Canny Contours", foreground)
 
         # entry = CameraDetection(
         #     shape=shape,
@@ -172,9 +188,9 @@ while True:
         # )
         # results.append(entry)
         # Display the result
-        cv2.imshow("Detected Shapes", foreground)
-        print(results)
-        results = []
+        #cv2.imshow("Detected Shapes", foreground)
+        #print(results)
+        #results = []
         if cv2.waitKey(100) & 0xFF == ord("q"):
             pass
 
