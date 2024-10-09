@@ -1,9 +1,6 @@
 import speech_recognition as sr
 import pyttsx3
 
-# for index, name in enumerate(sr.Microphone.list_microphone_names()):
-#     print(f'{index}, {name}')
-
 
 class AudioInterface:
     def __init__(self) -> None:
@@ -22,7 +19,7 @@ class AudioInterface:
 
         # use googles text to speech to get text
         text = self.r.recognize_google(audio, show_all=True)["alternative"][0]
-        if text:   
+        if text:
             words = text["transcript"].lower().split()
             return words
         else:
@@ -32,10 +29,8 @@ class AudioInterface:
         self.engine.say(string)
         self.engine.runAndWait()
 
-    def get_mode(self, modes=["color","size","shape"]):
-
+    def get_sort_mode(self, modes=["color", "size", "shape"]):
         self.output_audio("What mode should i sort by")
-
         while True:
             words = self.take_audio_input()
             if words:
@@ -46,16 +41,15 @@ class AudioInterface:
 
             self.output_audio("Please repeat what mode you want")
 
-    def get_command(self, mode):
+    def get_sort_order(self, mode):
 
-        shapes = ["cube", "star", "hexagon","cylinder"]
-        colors = ["red", "green", "blue","white"]
+        shapes = ["cube", "star", "hexagon", "cylinder"]
+        colors = ["red", "green", "blue", "white"]
         size = ["big", "small"]
         instructions = []
-        print("get instructions")
         # Define the text you want to convert to speech
         # Convert the text to speech
-        text = "In what order shall i sort by " + mode 
+        text = "In what order shall i sort by " + mode
         self.output_audio(text)
 
         while True:
@@ -76,10 +70,3 @@ class AudioInterface:
                 return instructions
 
             self.output_audio("Please repeat what order you want")
-
-
-
-# mode = get_mode(["shape","size","color"])
-# instructions = get_command(mode)
-# print(mode)
-# print(instructions)

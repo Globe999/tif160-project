@@ -6,6 +6,7 @@ from main.kinematics.inverse_kinematics_dummy import (
     dumb_but_optimized_inverse_kinematics,
     forward_kinematics,
 )
+from main.speech.speech_to_instructions import AudioInterface
 from main.vision.vision import Camera, CameraDetection
 from utils.serial_communication import ArduinoSerial
 
@@ -19,15 +20,18 @@ class Position:
 
 class Hubert:
     def __init__(self):
-        self.arduino = ArduinoSerial()
-        self.position = np.array([0.1, -0.1, 0.3])
+        self._arduino = ArduinoSerial()
         self._angles = np.array([0, 0, 0])
+        self._voice = AudioInterface()
+        self.position = np.array([0.1, -0.1, 0.3])
 
-        self.positions = {
+        self.static_positions = {
             "1": Position(x=0.14, y=-0.085, z=0.02),
             "2": Position(x=0.13, y=0.08, z=0.02),
             "dropoff": Position(x=0.3, y=0, z=0.02),
         }
+        self.sort_mode = None
+        self.sort_order = None
 
     @property
     def angles(self):
@@ -36,8 +40,16 @@ class Hubert:
     @angles.setter
     def angles(self, angles):
         self._angles = np.array(angles)
-        self.arduino.set_angles(self._angles)
-        self.arduino.send_to_arduino(wait_for_reply=True)
+        self._arduino.set_angles(self._angles)
+        self._arduino.send_to_arduino(wait_for_reply=True)
+
+    def set_sort_mode(self):
+        # TODO:Replace this with sort modes recieved from the camera detections
+        available_sort_modes = ["shape", "color", "size"]
+        self.sort_mode = self._voice.get_sort_mode(available_sort_modes)
+
+    def set_sort_order(self):
+        self.sort_order = self._voice.get_sort_order(self.sort_mode)
 
     def update_position(self, x, y, z):
         self.position = np.array([x, y, z])
@@ -48,7 +60,7 @@ class Hubert:
         self.position = self.forward_kinematics(theta1, theta2, theta3)
 
     def set_camera_position(self):
-        self.arduino.set_camera_position()
+        self._arduino.set_camera_position()
 
     def action_pick_up(self, x, y, z) -> bool:
         print("Picking up object at", x, y, z)
@@ -64,11 +76,11 @@ class Hubert:
         # Lower arm
         self.angles = (self.angles[0], self.angles[1], theta3)
         print("Opening gripper")
-        self.arduino.open_gripper()
+        self._arduino.open_gripper()
         self.angles = (self.angles[0] - 5, theta2 - 4, self.angles[2] - 4)
         # Close gripper
         time.sleep(2)
-        self.arduino.close_gripper()
+        self._arduino.close_gripper()
 
         # Raise arm
         print("Here1")
@@ -94,13 +106,13 @@ class Hubert:
         self.angles = (self.angles[0], theta2, self.angles[2])
         print("Opening gripper")
 
-        self.arduino.open_gripper()
+        self._arduino.open_gripper()
         # Close gripper
 
         # Raise arm
         self.angles = (self.angles[0], 90, self.angles[2])
         self.angles = (self.angles[0], self.angles[1], -85)
-        self.arduino.close_gripper()
+        self._arduino.close_gripper()
 
         return True
 
@@ -111,10 +123,10 @@ class Hubert:
         return forward_kinematics(theta1, theta2, theta3)
 
     def close_gripper(self):
-        self.arduino.close_gripper()
+        self._arduino.close_gripper()
 
     def open_gripper(self):
-        self.arduino.open_gripper()
+        self._arduino.open_gripper()
 
     def detect_objects(self, camera: Camera) -> List[CameraDetection]:
         self.set_camera_position()

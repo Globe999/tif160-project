@@ -30,7 +30,7 @@ class ControlPanel(tk.Tk):
         self.update_video_feed()
 
     def create_servo_controls(self):
-        for col_index, servo in enumerate(self.hubert.arduino.servos):
+        for col_index, servo in enumerate(self.hubert._arduino.servos):
             frame = ttk.Frame(self.servo_frame)
             frame.pack(pady=10)
 
@@ -87,7 +87,7 @@ class ControlPanel(tk.Tk):
             row=8, column=0, columnspan=2
         )
         self.current_servo_labels = []
-        for i, servo in enumerate(self.hubert.arduino.servos):
+        for i, servo in enumerate(self.hubert._arduino.servos):
             ttk.Label(self.info_frame, text=f"Servo {servo.name}:").grid(
                 row=9 + i, column=0
             )
@@ -206,7 +206,7 @@ class ControlPanel(tk.Tk):
         self.current_shoulder_angle_label.config(text=f"{self.hubert.angles[1]:.3f}")
         self.current_elbow_angle_label.config(text=f"{self.hubert.angles[2]:.3f}")
 
-        for i, servo in enumerate(self.hubert.arduino.servos):
+        for i, servo in enumerate(self.hubert._arduino.servos):
             self.current_servo_labels[i].config(text=f"{servo.position}")
 
     def set_angles(self):
@@ -230,9 +230,9 @@ class ControlPanel(tk.Tk):
         self.update_info_panel()
 
     def increment(self, col_index, amount):
-        self.hubert.arduino.servos[col_index].increment_position(amount)
+        self.hubert._arduino.servos[col_index].increment_position(amount)
         self.disable_buttons()
-        self.hubert.arduino.send_to_arduino(wait_for_reply=True)
+        self.hubert._arduino.send_to_arduino(wait_for_reply=True)
         self.enable_buttons()
 
     def disable_buttons(self):
