@@ -41,9 +41,7 @@ class ControlPanel(tk.Tk):
                 button = ttk.Button(
                     frame,
                     text=f"{value}",
-                    command=lambda idx=col_index, val=value: self.run_in_thread(
-                        self.increment, idx, val
-                    ),
+                    command=lambda idx=col_index, val=value: self.increment(idx, val),
                 )
                 button.grid(row=1, column=idx, padx=5)
                 self.buttons.append(button)
@@ -120,7 +118,7 @@ class ControlPanel(tk.Tk):
         angle_button = ttk.Button(
             angle_frame,
             text="Set Angles",
-            command=lambda: self.run_in_thread(self.set_angles),
+            command=self.set_angles,
         )
         angle_button.grid(row=3, columnspan=2)
         self.buttons.append(angle_button)
@@ -144,7 +142,7 @@ class ControlPanel(tk.Tk):
         kinematics_button = ttk.Button(
             kinematics_frame,
             text="Calculate Inverse Kinematics",
-            command=lambda: self.run_in_thread(self.set_position),
+            command=self.set_position,
         )
         kinematics_button.grid(row=3, columnspan=2)
         self.buttons.append(kinematics_button)
@@ -155,7 +153,7 @@ class ControlPanel(tk.Tk):
         open_gripper_button = ttk.Button(
             gripper_frame,
             text="Open Gripper",
-            command=lambda: self.run_in_thread(self.open_gripper),
+            command=self.open_gripper,
         )
         open_gripper_button.grid(row=0, column=0, pady=5)
         self.buttons.append(open_gripper_button)
@@ -163,7 +161,7 @@ class ControlPanel(tk.Tk):
         close_gripper_button = ttk.Button(
             gripper_frame,
             text="Close Gripper",
-            command=lambda: self.run_in_thread(self.close_gripper),
+            command=self.close_gripper,
         )
         close_gripper_button.grid(row=1, column=0, pady=5)
         self.buttons.append(close_gripper_button)
@@ -171,7 +169,7 @@ class ControlPanel(tk.Tk):
         detect_objects_button = ttk.Button(
             controls_frame,
             text="Detect Objects",
-            command=lambda: self.run_in_thread(self.detect_objects),
+            command=self.detect_objects,
         )
         detect_objects_button.grid(row=1, column=2, padx=10, pady=5)
         self.buttons.append(detect_objects_button)

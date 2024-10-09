@@ -14,7 +14,7 @@ from utils.robot_control_panel import ControlPanel
 from vision.vision import Camera, CameraDetection
 
 
-def get_sorted_objects(sort_mode, order, objects):
+def get_sorted_objects(sort_mode, order, objects) -> List[CameraDetection]:
     # Magic
     rank = {value: i for i, value in enumerate(order)}
     sorted_objects = sorted(
@@ -63,17 +63,22 @@ def main():
     camera_detections: List[CameraDetection] = hubert.detect_objects(camera)
 
     print(camera_detections)
-    camera_detections = camera.merge_objects(camera_detections)
-    
-    mode = AudioInterface.get_mode()
+    camera_detections = camera.merge_objects(camera_detections, 0.05)  # 5cm threshold
 
-    order = AudioInterface.get_command(mode)
-    
+    mode = "color"
+    # mode = AudioInterface.get_mode()
+
+    order = ["red", "green", "blue"]
+    # order = AudioInterface.get_command(mode)
+
     sorted_objects = get_sorted_objects(mode, order, camera_detections)
     print(sorted_objects)
-    
+
+    for idx, obj in enumerate(sorted_objects):
+        print(f"Idx:{idx}, Color: {obj.color}, Shap: {obj.shape}")
+        print(f"x:{obj.global_x:.5f}\t y:{obj.global_y:.5f}\tz:{obj.global_z:.5f}")
     for object in sorted_objects:
-        hubert.action_pick_up(object.x, object.y, object.z + 0.02)
+        hubert.action_pick_up(object.global_x, object.global_y, object.global_z + 0.02)
         hubert.action_drop_off(0.22, 0.22, 0.04)
 
     # # Filter the detections to find the green object
