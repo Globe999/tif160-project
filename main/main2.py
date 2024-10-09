@@ -60,9 +60,21 @@ def main():
     # control_panel.mainloop()
     camera = Camera(index=2)  # Use the correct index
 
-    camera_detections: dict[int, List[CameraDetection]] = hubert.detect_objects(camera)
+    camera_detections: List[CameraDetection] = hubert.detect_objects(camera)
 
     print(camera_detections)
+    camera_detections = camera.merge_objects(camera_detections)
+    
+    mode = AudioInterface.get_mode()
+
+    order = AudioInterface.get_command(mode)
+    
+    sorted_objects = get_sorted_objects(mode, order, camera_detections)
+    print(sorted_objects)
+    
+    for object in sorted_objects:
+        hubert.action_pick_up(object.x, object.y, object.z + 0.02)
+        hubert.action_drop_off(0.22, 0.22, 0.04)
 
     # # Filter the detections to find the green object
     # green_objects = [obj for obj in res if obj.color == "red"]
