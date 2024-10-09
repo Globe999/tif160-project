@@ -56,15 +56,6 @@ while True:
             masks[color] = mask
             cv2.imshow(f"{color.capitalize()} Mask", mask)
 
-        # Create color masks
-        # masks = {}
-        # for color, (lower, upper) in color_ranges.items():
-        #     mask = cv2.inRange(hsv, lower, upper)
-        #     masks[color] = mask
-        #     # Display each color mask in a separate window
-        #     cv2.imshow(f"{color.capitalize()} Mask", mask)
-        #  Combine red masks for full red detection
-        # masks['red'] = cv2.bitwise_or(masks['red1'], masks['red2'])
 
         # Sharpen red mask specifically
         kernel_sharpening = np.array([[-1, -1, -1], [-1, 9, -1], [-1, -1, -1]])
@@ -72,9 +63,6 @@ while True:
         masks["red"] = cv2.filter2D(masks["red"], -1, kernel_sharpening)
         kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
 
-        # Define kernels for morphological operations
-        # kernel_open = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
-        # kernel_close = cv2.getStructuringElement(cv2.MORPH_RECT, (7, 7))
 
         # Reduce noise with morphological operations
         for color, mask in masks.items():
@@ -105,7 +93,7 @@ while True:
         # Apply Canny edge detection to the foreground
         gray_image = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         im_noisy = ndi.gaussian_filter(gray_image, 4)
-        edges = feature.canny(im_noisy, sigma=3)
+        edges = feature.canny(im_noisy, sigma=3.5)
         edges_display = (edges * 255).astype(np.uint8)
         cv2.imshow("Canny Edges", edges_display)
 
@@ -143,7 +131,7 @@ while True:
                     if vertices > 8:
                         shape = "Star Prism"
 
-                # Detect color in the bounding box
+                 # Detect color in the bounding box
                 shape_color = "Unknown"
                 for color, mask in masks.items():
                     mask_region = mask[y:y+h, x:x+w]
@@ -151,20 +139,14 @@ while True:
                     if non_zero_pixels > 0.5 * mask_region.size:  # If more than 50% of the bounding box matches this color
                         shape_color = color
                         break  # Assign the first detected color
-                                    # Draw the contour on the color foreground (in blue) and label it
+
+                # Draw the contour on the color foreground (in blue) and label it
                 cv2.drawContours(foreground, [contour], -1, (255, 0, 0), 2)  # Blue color for Canny contours
                 cv2.putText(foreground, f"{shape_color} {shape} ", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
                 entry = CameraDetection(shape=shape, x=x+w/2, y=y+h/2, z=0, size=w*h, color=shape_color)
                 results.append(entry)
         cv2.imshow("Foreground with Canny Contours", foreground)
         print(results)
-
-
-        entry = CameraDetection(
-                    shape=shape, x=x + w / 2, y=y + h / 2, z=0, size=w * h, color=color
-                )
-        #results.append(entry)
-        # cv2.imshow("Foreground with Canny Contours", foreground)
 
         # entry = CameraDetection(
         #     shape=shape,
