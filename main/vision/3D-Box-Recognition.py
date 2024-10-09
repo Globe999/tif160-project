@@ -115,21 +115,21 @@ while True:
                 # Shape classification based on the contour vertices
                 shape = "Unknown"
                 if vertices == 6:
-                    shape = "Hexagon"
+                    shape = "hexagon"
                 elif vertices == 4:
                     aspect_ratio = float(w) / h
-                    shape = "Cube" if 0.9 < aspect_ratio < 1.2 else "Rectangle"
+                    shape = "Cube" if 0.9 < aspect_ratio < 1.2 else "rectangle"
                 elif vertices > 0:
                     area = cv2.contourArea(contour)
                     perimeter = cv2.arcLength(contour, True)
                     circularity = (4 * np.pi * area) / (perimeter**2)
                     if circularity > 0.8:
-                        shape = "Cylinder"
+                        shape = "cylinder"
                     else:
-                        shape = "Star Prism"
+                        shape = "star_prism"
                 else:
                     if vertices > 8:
-                        shape = "Star Prism"
+                        shape = "star_prism"
 
                  # Detect color in the bounding box
                 max_coverage = 0
