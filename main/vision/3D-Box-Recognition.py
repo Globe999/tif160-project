@@ -43,7 +43,7 @@ while True:
                 'white': ((0, 0, 200), (180, 20, 255)),
                 'red': ((0, 90, 80), (180, 255, 255)),
                 'blue': ((100, 120, 70), (140, 255, 255)),
-                'green': ((40, 100, 50), (90, 255, 255))
+                'green': ((40, 50, 50), (90, 255, 255))
             }
 
         mask_bright = cv2.inRange(hsv, (0, 0, 140), (180, 255, 255))
@@ -69,7 +69,7 @@ while True:
             cv2.imshow(f"{color} Mask", mask)
 
             # Opening to remove small noise
-            masks[color] = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel, iterations=2)
+            masks[color] = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel, iterations=4)
             # Closing to fill small holes in the object
             masks[color] = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel, iterations=2)
             # Visualize each color mask
@@ -132,13 +132,14 @@ while True:
                         shape = "Star Prism"
 
                  # Detect color in the bounding box
-                shape_color = "Unknown"
+                max_coverage = 0
                 for color, mask in masks.items():
                     mask_region = mask[y:y+h, x:x+w]
                     non_zero_pixels = cv2.countNonZero(mask_region)
-                    if non_zero_pixels > 0.4 * mask_region.size:  
+                    coverage = non_zero_pixels / mask_region.size
+                    if coverage > max_coverage:
+                        max_coverage = coverage
                         shape_color = color
-                        break  
 
                 # Draw the contour on the color foreground (in blue) and label it
                 cv2.drawContours(foreground, [contour], -1, (255, 0, 0), 2)  
