@@ -160,22 +160,22 @@ while True:
         print(results)
 
                 # Draw the contour on the color foreground (in blue) and label it
-        cv2.drawContours(
-                    foreground, [contour], -1, (255, 0, 0), 2
-                )  # Blue color for Canny contours
-        cv2.putText(
-                    foreground,
-                    f"{shape}",
-                    (x, y - 10),
-                    cv2.FONT_HERSHEY_SIMPLEX,
-                    0.5,
-                    (255, 255, 255),
-                    2,
-                )
+        # cv2.drawContours(
+        #             foreground, [contour], -1, (255, 0, 0), 2
+        #         )  # Blue color for Canny contours
+        # cv2.putText(
+        #             foreground,
+        #             f"{shape}",
+        #             (x, y - 10),
+        #             cv2.FONT_HERSHEY_SIMPLEX,
+        #             0.5,
+        #             (255, 255, 255),
+        #             2,
+        #         )
         entry = CameraDetection(
                     shape=shape, x=x + w / 2, y=y + h / 2, z=0, size=w * h, color=color
                 )
-        results.append(entry)
+        #results.append(entry)
         # cv2.imshow("Foreground with Canny Contours", foreground)
 
         # entry = CameraDetection(
