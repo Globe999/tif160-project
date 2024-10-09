@@ -32,7 +32,7 @@ class AudioInterface:
         self.engine.say(string)
         self.engine.runAndWait()
 
-    def get_mode(self, modes):
+    def get_mode(self, modes=["color","size","shape"]):
 
         self.output_audio("What mode should i sort by")
 

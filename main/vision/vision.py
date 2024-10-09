@@ -182,11 +182,11 @@ class Camera:
 
         merged_points = []
 
-        while CameraDetection:
-            point = CameraDetection.pop(0)
+        while objects:
+            point = objects.pop(0)
             cluster = [point]
 
-            for other_point in CameraDetection:
+            for other_point in objects:
                 dist = np.sqrt(
                     (point.x - point.x) ** 2 + (other_point.y - other_point.y) ** 2
                 )
@@ -196,7 +196,7 @@ class Camera:
                     and (point.shape == other_point.shape)
                 ):
                     cluster.append(other_point)
-                    CameraDetection.remove(other_point)
+                    objects.remove(other_point)
 
             # Merge all points in the cluster into a single point (average of the cluster)
             if len(cluster) > 1:
