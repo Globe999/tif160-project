@@ -177,33 +177,40 @@ class Camera:
             )
 
         return objects
-    
-    def merge_objects(self,objects:List[CameraDetection],threshold):
-        
+
+    def merge_objects(self, objects: List[CameraDetection], threshold):
+
         merged_points = []
 
         while objects:
             point = objects.pop(0)
             cluster = [point]
-            
+
             for other_point in objects:
-                dist = np.sqrt((point.x - point.x) ** 2 + (other_point.y - other_point.y) ** 2)
-                if ((dist <= threshold) and (point.color == other_point.color) and (point.shape == other_point.shape)):
+                dist = np.sqrt(
+                    (point.global_x - point.global_x) ** 2
+                    + (other_point.global_y - other_point.global_y) ** 2
+                )
+                if (
+                    (dist <= threshold)
+                    and (point.color == other_point.color)
+                    # and (point.shape == other_point.shape)
+                ):
                     cluster.append(other_point)
                     objects.remove(other_point)
 
             # Merge all points in the cluster into a single point (average of the cluster)
             if len(cluster) > 1:
-                avg_x = sum(p.x for p in cluster) / len(cluster)
-                avg_y = sum(p.y for p in cluster) / len(cluster)
-                cluster[0].x = avg_x
-                cluster[0].y = avg_y
+                avg_x = sum(p.global_x for p in cluster) / len(cluster)
+                avg_y = sum(p.global_y for p in cluster) / len(cluster)
+                cluster[0].global_x = avg_x
+                cluster[0].global_y = avg_y
                 merged_points.append(cluster[0])
             else:
                 merged_points.append(point)
-        
+
         return merged_points
-            
+
 
 # cam = Camera()
 # x, y = cam.get_position(0, 0, np.pi / 4)
