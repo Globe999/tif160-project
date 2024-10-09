@@ -3,8 +3,8 @@ from tkinter import ttk
 from PIL import Image, ImageTk
 import cv2
 import threading
-from main.hubert import Hubert
-from main.vision.vision import Camera
+from hubert import Hubert
+from vision import Camera
 
 
 class ControlPanel(tk.Tk):

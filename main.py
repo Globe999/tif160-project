@@ -8,10 +8,8 @@ import cv2
 import numpy as np
 
 # from main.hubert import Hubert
-from main.hubert import Hubert
-from speech.speech_to_instructions import AudioInterface
-from utils.robot_control_panel import ControlPanel
-from vision.vision import Camera, CameraDetection
+from hubert import Hubert
+from vision import Camera, CameraDetection
 
 
 def get_sorted_objects(sort_mode, order, objects) -> List[CameraDetection]:

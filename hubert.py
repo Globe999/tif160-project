@@ -2,12 +2,12 @@ from dataclasses import dataclass
 import time
 from typing import List
 import numpy as np
-from main.kinematics.inverse_kinematics_dummy import (
+from inverse_kinematics import (
     dumb_but_optimized_inverse_kinematics,
     forward_kinematics,
 )
-from main.speech.speech_to_instructions import AudioInterface
-from main.vision.vision import Camera, CameraDetection
+from audio_interface import AudioInterface
+from vision import Camera, CameraDetection
 from utils.serial_communication import ArduinoSerial
 
 
