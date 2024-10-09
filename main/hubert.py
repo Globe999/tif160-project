@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 import time
 from typing import List
 import numpy as np
@@ -9,11 +10,24 @@ from main.vision.vision import Camera, CameraDetection
 from utils.serial_communication import ArduinoSerial
 
 
+@dataclass
+class Position:
+    x: float
+    y: float
+    z: float
+
+
 class Hubert:
     def __init__(self):
         self.arduino = ArduinoSerial()
         self.position = np.array([0.1, -0.1, 0.3])
         self._angles = np.array([0, 0, 0])
+
+        self.positions = {
+            "1": Position(x=0.14, y=-0.085, z=0.02),
+            "2": Position(x=0.13, y=0.08, z=0.02),
+            "dropoff": Position(x=0.3, y=0, z=0.02),
+        }
 
     @property
     def angles(self):
@@ -108,6 +122,7 @@ class Hubert:
         for i in np.arange(-70, 70, 20, dtype=int):
             self.update_angles(i, 90, -85)
             camera_detections.extend(camera.get_detected_objects(angle=i))
+
         return camera_detections
 
 
