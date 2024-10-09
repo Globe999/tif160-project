@@ -1,3 +1,4 @@
+import time
 import numpy as np
 import cv2 as cv
 
@@ -7,13 +8,16 @@ if not cap.isOpened():
     print("Cannot open camera")
     exit()
 
+
+today = time.strftime("%Y-%m-%d-%H-%M-%S")
+
 # Get the width and height of the frames
 frame_width = int(cap.get(cv.CAP_PROP_FRAME_WIDTH))
 frame_height = int(cap.get(cv.CAP_PROP_FRAME_HEIGHT))
 
 # Define the codec and create VideoWriter object
 fourcc = cv.VideoWriter_fourcc(*"mp4v")  # Codec for MP4
-out = cv.VideoWriter("output.mp4", fourcc, 20.0, (frame_width, frame_height))
+out = cv.VideoWriter(f"{today}.mp4", fourcc, 20.0, (frame_width, frame_height))
 
 while True:
     # Capture frame-by-frame
