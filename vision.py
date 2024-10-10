@@ -53,7 +53,9 @@ class Camera:
         self.index = index
         self.width = 640
         self.height = 480
-        self.model = YOLO(Path().cwd() / "neural_network" / "weights" / "best.pt")
+        self.model = YOLO(
+            Path().cwd() / "neural_network" / "weights" / "best_100_epochs.pt"
+        )
 
     def grab_frame(self):
         cap = cv2.VideoCapture(self.index)
@@ -63,8 +65,6 @@ class Camera:
         return frame
 
     def run_object_detection(self):
-        self.model = YOLO(Path().cwd() / "neural_network" / "weights" / "best.pt")
-
         while True:
             img = self.grab_frame()
             results = self.model(img, stream=True)
@@ -296,7 +296,7 @@ class Camera:
                     angle=angle,
                 )
                 detections.append(entry)
-        cv2.imshow("frame",frame)
+        cv2.imshow("frame", frame)
         cv2.waitKey(1)
         return self.get_global_position(detections, camera_angle=angle)
 
