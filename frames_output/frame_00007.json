@@ -3,33 +3,16 @@
   "flags": {},
   "shapes": [
     {
-      "label": "green cube",
+      "label": "white cylinder",
       "text": "",
       "points": [
         [
-          32.0,
-          44.0
+          517.0,
+          226.0
         ],
         [
-          195.0,
-          216.0
-        ]
-      ],
-      "group_id": null,
-      "shape_type": "rectangle",
-      "flags": {}
-    },
-    {
-      "label": "red star",
-      "text": "",
-      "points": [
-        [
-          193.0,
-          211.0
-        ],
-        [
-          341.0,
-          367.0
+          638.0,
+          372.0
         ]
       ],
       "group_id": null,
@@ -41,12 +24,12 @@
       "text": "",
       "points": [
         [
-          329.0,
-          8.0
+          378.0,
+          18.0
         ],
         [
-          474.0,
-          175.0
+          529.0,
+          183.0
         ]
       ],
       "group_id": null,
@@ -54,16 +37,16 @@
       "flags": {}
     },
     {
-      "label": "white cylinder",
+      "label": "red star",
       "text": "",
       "points": [
         [
-          483.0,
-          201.0
+          232.0,
+          211.0
         ],
         [
-          635.0,
-          345.0
+          383.0,
+          360.0
         ]
       ],
       "group_id": null,
@@ -71,16 +54,16 @@
       "flags": {}
     },
     {
-      "label": "white cube",
+      "label": "green cube",
       "text": "",
       "points": [
         [
-          511.0,
-          0.0
+          79.0,
+          32.0
         ],
         [
-          639.0,
-          180.0
+          231.0,
+          194.0
         ]
       ],
       "group_id": null,
@@ -88,7 +71,7 @@
       "flags": {}
     }
   ],
-  "imagePath": "frame_00000.jpg",
+  "imagePath": "frame_00007.jpg",
   "imageData": null,
   "imageHeight": 480,
   "imageWidth": 640

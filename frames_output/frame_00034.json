@@ -3,16 +3,16 @@
   "flags": {},
   "shapes": [
     {
-      "label": "green cube",
+      "label": "blue star",
       "text": "",
       "points": [
         [
-          32.0,
-          44.0
+          470.0,
+          121.0
         ],
         [
-          195.0,
-          216.0
+          614.0,
+          262.0
         ]
       ],
       "group_id": null,
@@ -20,16 +20,16 @@
       "flags": {}
     },
     {
-      "label": "red star",
+      "label": "green cylinder",
       "text": "",
       "points": [
         [
-          193.0,
-          211.0
+          367.0,
+          284.0
         ],
         [
-          341.0,
-          367.0
+          496.0,
+          429.0
         ]
       ],
       "group_id": null,
@@ -37,16 +37,16 @@
       "flags": {}
     },
     {
-      "label": "red hexagon",
+      "label": "blue cylinder",
       "text": "",
       "points": [
         [
-          329.0,
-          8.0
+          183.0,
+          161.0
         ],
         [
-          474.0,
-          175.0
+          308.0,
+          309.0
         ]
       ],
       "group_id": null,
@@ -54,16 +54,16 @@
       "flags": {}
     },
     {
-      "label": "white cylinder",
+      "label": "white star",
       "text": "",
       "points": [
         [
-          483.0,
-          201.0
+          39.0,
+          70.0
         ],
         [
-          635.0,
-          345.0
+          175.0,
+          232.0
         ]
       ],
       "group_id": null,
@@ -71,16 +71,16 @@
       "flags": {}
     },
     {
-      "label": "white cube",
+      "label": "red cube",
       "text": "",
       "points": [
         [
-          511.0,
+          258.0,
           0.0
         ],
         [
-          639.0,
-          180.0
+          414.0,
+          131.0
         ]
       ],
       "group_id": null,
@@ -88,7 +88,7 @@
       "flags": {}
     }
   ],
-  "imagePath": "frame_00000.jpg",
+  "imagePath": "frame_00034.jpg",
   "imageData": null,
   "imageHeight": 480,
   "imageWidth": 640

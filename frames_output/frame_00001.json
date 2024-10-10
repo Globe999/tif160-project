@@ -3,16 +3,50 @@
   "flags": {},
   "shapes": [
     {
-      "label": "green cube",
+      "label": "white cube",
       "text": "",
       "points": [
         [
-          32.0,
-          44.0
+          511.0,
+          0.0
         ],
         [
-          195.0,
-          216.0
+          639.0,
+          180.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "white cylinder",
+      "text": "",
+      "points": [
+        [
+          502.0,
+          202.0
+        ],
+        [
+          634.0,
+          338.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "red hexagon",
+      "text": "",
+      "points": [
+        [
+          329.0,
+          8.0
+        ],
+        [
+          475.0,
+          175.0
         ]
       ],
       "group_id": null,
@@ -37,50 +71,16 @@
       "flags": {}
     },
     {
-      "label": "red hexagon",
+      "label": "green cube",
       "text": "",
       "points": [
         [
-          329.0,
-          8.0
+          32.0,
+          43.0
         ],
         [
-          474.0,
-          175.0
-        ]
-      ],
-      "group_id": null,
-      "shape_type": "rectangle",
-      "flags": {}
-    },
-    {
-      "label": "white cylinder",
-      "text": "",
-      "points": [
-        [
-          483.0,
-          201.0
-        ],
-        [
-          635.0,
-          345.0
-        ]
-      ],
-      "group_id": null,
-      "shape_type": "rectangle",
-      "flags": {}
-    },
-    {
-      "label": "white cube",
-      "text": "",
-      "points": [
-        [
-          511.0,
-          0.0
-        ],
-        [
-          639.0,
-          180.0
+          195.0,
+          216.0
         ]
       ],
       "group_id": null,
@@ -88,7 +88,7 @@
       "flags": {}
     }
   ],
-  "imagePath": "frame_00000.jpg",
+  "imagePath": "frame_00001.jpg",
   "imageData": null,
   "imageHeight": 480,
   "imageWidth": 640

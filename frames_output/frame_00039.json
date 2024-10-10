@@ -7,12 +7,12 @@
       "text": "",
       "points": [
         [
-          32.0,
-          44.0
+          249.0,
+          217.0
         ],
         [
-          195.0,
-          216.0
+          398.0,
+          377.0
         ]
       ],
       "group_id": null,
@@ -20,16 +20,50 @@
       "flags": {}
     },
     {
-      "label": "red star",
+      "label": "green cylinder",
       "text": "",
       "points": [
         [
-          193.0,
-          211.0
+          38.0,
+          302.0
         ],
         [
-          341.0,
-          367.0
+          167.0,
+          434.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "blue star",
+      "text": "",
+      "points": [
+        [
+          63.0,
+          95.0
+        ],
+        [
+          188.0,
+          251.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "red cylinder",
+      "text": "",
+      "points": [
+        [
+          400.0,
+          93.0
+        ],
+        [
+          526.0,
+          242.0
         ]
       ],
       "group_id": null,
@@ -41,12 +75,12 @@
       "text": "",
       "points": [
         [
-          329.0,
-          8.0
+          530.0,
+          278.0
         ],
         [
-          474.0,
-          175.0
+          638.0,
+          428.0
         ]
       ],
       "group_id": null,
@@ -54,16 +88,16 @@
       "flags": {}
     },
     {
-      "label": "white cylinder",
+      "label": "white hexagon",
       "text": "",
       "points": [
         [
-          483.0,
-          201.0
+          495.0,
+          22.0
         ],
         [
-          635.0,
-          345.0
+          636.0,
+          178.0
         ]
       ],
       "group_id": null,
@@ -71,16 +105,16 @@
       "flags": {}
     },
     {
-      "label": "white cube",
+      "label": "green star",
       "text": "",
       "points": [
         [
-          511.0,
+          300.0,
           0.0
         ],
         [
-          639.0,
-          180.0
+          438.0,
+          113.0
         ]
       ],
       "group_id": null,
@@ -88,7 +122,7 @@
       "flags": {}
     }
   ],
-  "imagePath": "frame_00000.jpg",
+  "imagePath": "frame_00039.jpg",
   "imageData": null,
   "imageHeight": 480,
   "imageWidth": 640
