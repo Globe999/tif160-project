@@ -1,0 +1,24 @@
+train: images/train # train images (relative to 'path') 4 images
+val: images/val # val images (relative to 'path') 4 images
+
+names:
+  0: red hexagon
+  1: red cube
+  2: red star
+  3: red cylinder
+  4: yellow hexagon
+  5: yellow cube
+  6: yellow star
+  7: yellow cylinder
+  8: green hexagon
+  9: green cube
+  10: green star
+  11: green cylinder
+  12: blue hexagon
+  13: blue cube
+  14: blue star
+  15: blue cylinder
+  16: white hexagon
+  17: white cube
+  18: white star
+  19: white cylinder

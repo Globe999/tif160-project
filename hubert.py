@@ -133,7 +133,7 @@ class Hubert:
         camera_detections = []
         for i in np.arange(-70, 70, 20, dtype=int):
             self.update_angles(i, 90, -85)
-            camera_detections.extend(camera.get_detected_objects(angle=i))
+            camera_detections.extend(camera.get_detected_objects_from_nn(angle=i))
 
         return camera_detections
 

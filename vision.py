@@ -1,10 +1,37 @@
 from dataclasses import dataclass
+from pathlib import Path
 from typing import List
-
+import cvzone
 import cv2
+import math
 import numpy as np
 from scipy import ndimage as ndi
 from skimage import feature
+from ultralytics import YOLO
+
+
+classNames = [
+    "red hexagon",
+    "red cube",
+    "red star",
+    "red cylinder",
+    "yellow hexagon",
+    "yellow cube",
+    "yellow star",
+    "yellow cylinder",
+    "green hexagon",
+    "green cube",
+    "green star",
+    "green cylinder",
+    "blue hexagon",
+    "blue cube",
+    "blue star",
+    "blue cylinder",
+    "white hexagon",
+    "white cube",
+    "white star",
+    "white cylinder",
+]
 
 
 @dataclass
@@ -26,6 +53,7 @@ class Camera:
         self.index = index
         self.width = 640
         self.height = 480
+        self.model = YOLO(Path().cwd() / "neural_network" / "weights" / "best.pt")
 
     def grab_frame(self):
         cap = cv2.VideoCapture(self.index)
@@ -33,6 +61,37 @@ class Camera:
         if not ret or frame is None:
             raise Exception("Error: Could not open image.")
         return frame
+
+    def run_object_detection(self):
+        self.model = YOLO(Path().cwd() / "neural_network" / "weights" / "best.pt")
+
+        while True:
+            img = self.grab_frame()
+            results = self.model(img, stream=True)
+
+            for r in results:
+                boxes = r.boxes
+                for box in boxes:
+                    x1, y1, x2, y2 = box.xyxy[0]
+                    x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
+                    w, h = x2 - x1, y2 - y1
+                    cvzone.cornerRect(img, (x1, y1, w, h))
+
+                    conf = math.ceil((box.conf[0] * 100)) / 100
+
+                    cls = box.cls[0]
+                    name = classNames[int(cls)]
+
+                    cvzone.putTextRect(
+                        img,
+                        f"{name} " f"{conf}",
+                        (max(0, x1), max(35, y1)),
+                        scale=0.5,
+                        thickness=1,
+                    )
+
+            cv2.imshow("Image", img)
+            cv2.waitKey(1)
 
     def get_detected_objects(self, angle: int, frame=None) -> List[CameraDetection]:
         if frame is None:
@@ -181,6 +240,65 @@ class Camera:
         return self.get_global_position(results, camera_angle=angle)
 
         ##### HELLO
+
+    def get_detected_objects_from_nn(
+        self, angle: int, frame=None
+    ) -> List[CameraDetection]:
+        frame = self.grab_frame()
+        if frame is None:
+            frame = self.grab_frame()
+
+        results = self.model(frame, stream=True)
+        detections = []
+        for r in results:
+            boxes = r.boxes
+            for box in boxes:
+                if box.conf[0] < 0.8:
+                    continue
+
+                x1, y1, x2, y2 = box.xyxy[0]
+                x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
+                w, h = x2 - x1, y2 - y1
+
+                cvzone.cornerRect(frame, (x1, y1, w, h))
+
+                conf = math.ceil((box.conf[0] * 100)) / 100
+
+                cls = box.cls[0]
+                name = classNames[int(cls)]
+
+                cvzone.putTextRect(
+                    frame,
+                    f"{name} " f"{conf}",
+                    (max(0, x1), max(35, y1)),
+                    scale=0.5,
+                    thickness=1,
+                )
+
+                cls = box.cls[0]
+                classification = classNames[int(cls)].split()
+                color = classification[0]
+                shape = classification[1]
+                x = x1 / self.width - 0.5
+                y = -1 * (y1 / self.height - 0.5)
+                w = w / self.width
+                h = h / self.height
+                entry = CameraDetection(
+                    shape=shape,
+                    x=x + w / 2,
+                    y=y - h / 2,
+                    z=0,
+                    size=w * h,
+                    color=color,
+                    global_x=0,
+                    global_y=0,
+                    global_z=0,
+                    angle=angle,
+                )
+                detections.append(entry)
+        cv2.imshow("frame",frame)
+        cv2.waitKey(1)
+        return self.get_global_position(detections, camera_angle=angle)
 
     def get_global_position(self, objects: List[CameraDetection], camera_angle: int):
 
@@ -358,3 +476,9 @@ class Camera:
 #                     angle=angle,
 #                 )
 #                 results.append(entry)
+
+
+if __name__ == "__main__":
+    camera = Camera()
+
+    camera.run_object_detection()
