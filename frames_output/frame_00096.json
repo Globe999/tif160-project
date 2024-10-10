@@ -1,0 +1,129 @@
+{
+  "version": "0.3.3",
+  "flags": {},
+  "shapes": [
+    {
+      "label": "blue hexagon",
+      "text": "",
+      "points": [
+        [
+          361.0,
+          0.0
+        ],
+        [
+          513.9560439560439,
+          93.02197802197803
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "white cube",
+      "text": "",
+      "points": [
+        [
+          471.0,
+          48.0
+        ],
+        [
+          638.0,
+          218.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "white cylinder",
+      "text": "",
+      "points": [
+        [
+          421.0,
+          184.0
+        ],
+        [
+          563.0,
+          332.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "red hexagon",
+      "text": "",
+      "points": [
+        [
+          297.0,
+          77.0
+        ],
+        [
+          439.0,
+          245.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "red star",
+      "text": "",
+      "points": [
+        [
+          169.0,
+          284.0
+        ],
+        [
+          314.0,
+          438.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "red cylinder",
+      "text": "",
+      "points": [
+        [
+          98.0,
+          0.0
+        ],
+        [
+          229.0,
+          113.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "green cube",
+      "text": "",
+      "points": [
+        [
+          6.0,
+          124.0
+        ],
+        [
+          167.0,
+          297.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    }
+  ],
+  "imagePath": "frame_00096.jpg",
+  "imageData": null,
+  "imageHeight": 480,
+  "imageWidth": 640
+}

@@ -1,0 +1,44 @@
+{
+  "version": "0.3.3",
+  "flags": {},
+  "shapes": [
+    {
+      "label": "white star",
+      "text": "",
+      "points": [
+        [
+          335.0,
+          74.0
+        ],
+        [
+          464.0,
+          242.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "white cylinder",
+      "text": "",
+      "points": [
+        [
+          442.0,
+          229.0
+        ],
+        [
+          579.0,
+          392.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    }
+  ],
+  "imagePath": "frame_00139.jpg",
+  "imageData": null,
+  "imageHeight": 480,
+  "imageWidth": 640
+}

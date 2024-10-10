@@ -1,0 +1,61 @@
+{
+  "version": "0.3.3",
+  "flags": {},
+  "shapes": [
+    {
+      "label": "green star",
+      "text": "",
+      "points": [
+        [
+          486.0,
+          341.0
+        ],
+        [
+          630.0,
+          479.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "white cylinder",
+      "text": "",
+      "points": [
+        [
+          450.0,
+          82.0
+        ],
+        [
+          590.0,
+          235.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "white star",
+      "text": "",
+      "points": [
+        [
+          337.0,
+          0.0
+        ],
+        [
+          462.0,
+          86.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    }
+  ],
+  "imagePath": "frame_00136.jpg",
+  "imageData": null,
+  "imageHeight": 480,
+  "imageWidth": 640
+}
