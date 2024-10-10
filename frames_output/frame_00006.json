@@ -7,12 +7,12 @@
       "text": "",
       "points": [
         [
-          32.0,
-          44.0
+          29.0,
+          43.0
         ],
         [
-          195.0,
-          216.0
+          189.0,
+          213.0
         ]
       ],
       "group_id": null,
@@ -24,12 +24,12 @@
       "text": "",
       "points": [
         [
-          193.0,
+          191.0,
           211.0
         ],
         [
-          341.0,
-          367.0
+          337.0,
+          366.0
         ]
       ],
       "group_id": null,
@@ -41,29 +41,12 @@
       "text": "",
       "points": [
         [
-          329.0,
+          325.0,
           8.0
         ],
         [
-          474.0,
+          472.0,
           175.0
-        ]
-      ],
-      "group_id": null,
-      "shape_type": "rectangle",
-      "flags": {}
-    },
-    {
-      "label": "white cylinder",
-      "text": "",
-      "points": [
-        [
-          483.0,
-          201.0
-        ],
-        [
-          635.0,
-          345.0
         ]
       ],
       "group_id": null,
@@ -75,12 +58,29 @@
       "text": "",
       "points": [
         [
-          511.0,
-          0.0
+          526.0,
+          2.0
         ],
         [
-          639.0,
-          180.0
+          638.0,
+          154.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "white cylinder",
+      "text": "",
+      "points": [
+        [
+          478.0,
+          202.0
+        ],
+        [
+          631.0,
+          346.0
         ]
       ],
       "group_id": null,
@@ -88,7 +88,7 @@
       "flags": {}
     }
   ],
-  "imagePath": "frame_00000.jpg",
+  "imagePath": "frame_00006.jpg",
   "imageData": null,
   "imageHeight": 480,
   "imageWidth": 640

@@ -1,0 +1,44 @@
+{
+  "version": "0.4.10",
+  "flags": {},
+  "shapes": [
+    {
+      "label": "green cylinder",
+      "text": "",
+      "points": [
+        [
+          450.0,
+          72.0
+        ],
+        [
+          592.0,
+          222.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "blue cylinder",
+      "text": "",
+      "points": [
+        [
+          279.0,
+          0.0
+        ],
+        [
+          402.0,
+          71.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    }
+  ],
+  "imagePath": "frame_00076.jpg",
+  "imageData": null,
+  "imageHeight": 480,
+  "imageWidth": 640
+}

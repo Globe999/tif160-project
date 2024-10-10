@@ -3,16 +3,16 @@
   "flags": {},
   "shapes": [
     {
-      "label": "green cube",
+      "label": "green cylinder",
       "text": "",
       "points": [
         [
-          32.0,
-          44.0
+          395.0,
+          377.0
         ],
         [
-          195.0,
-          216.0
+          524.0,
+          479.0
         ]
       ],
       "group_id": null,
@@ -20,50 +20,16 @@
       "flags": {}
     },
     {
-      "label": "red star",
+      "label": "blue star",
       "text": "",
       "points": [
         [
-          193.0,
-          211.0
-        ],
-        [
-          341.0,
-          367.0
-        ]
-      ],
-      "group_id": null,
-      "shape_type": "rectangle",
-      "flags": {}
-    },
-    {
-      "label": "red hexagon",
-      "text": "",
-      "points": [
-        [
-          329.0,
-          8.0
-        ],
-        [
-          474.0,
-          175.0
-        ]
-      ],
-      "group_id": null,
-      "shape_type": "rectangle",
-      "flags": {}
-    },
-    {
-      "label": "white cylinder",
-      "text": "",
-      "points": [
-        [
-          483.0,
-          201.0
+          493.0,
+          215.0
         ],
         [
           635.0,
-          345.0
+          361.0
         ]
       ],
       "group_id": null,
@@ -71,16 +37,67 @@
       "flags": {}
     },
     {
-      "label": "white cube",
+      "label": "blue cube",
       "text": "",
       "points": [
         [
-          511.0,
-          0.0
+          448.0,
+          4.0
         ],
         [
-          639.0,
-          180.0
+          577.0,
+          169.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "red cube",
+      "text": "",
+      "points": [
+        [
+          279.0,
+          50.0
+        ],
+        [
+          430.0,
+          218.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "blue cylinder",
+      "text": "",
+      "points": [
+        [
+          209.0,
+          248.0
+        ],
+        [
+          333.0,
+          364.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "white star",
+      "text": "",
+      "points": [
+        [
+          69.0,
+          153.0
+        ],
+        [
+          200.0,
+          312.0
         ]
       ],
       "group_id": null,
@@ -88,7 +105,7 @@
       "flags": {}
     }
   ],
-  "imagePath": "frame_00000.jpg",
+  "imagePath": "frame_00069.jpg",
   "imageData": null,
   "imageHeight": 480,
   "imageWidth": 640
