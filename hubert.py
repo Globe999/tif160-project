@@ -69,7 +69,7 @@ class Hubert:
 
         print("Moving to pick up object")
         # Ensure we are not close to ground level.
-        self.angles = (theta1, 90, -85)
+        self.angles = (theta1, 120, -85)
 
         print(self.angles)
         print("Lowering arm")
@@ -77,40 +77,55 @@ class Hubert:
         self.angles = (self.angles[0], self.angles[1], theta3)
         print("Opening gripper")
         self._arduino.open_gripper()
-        self.angles = (self.angles[0] - 5, theta2 - 4, self.angles[2] - 4)
+        self.angles = (self.angles[0], theta2 - 5, self.angles[2])
         # Close gripper
         time.sleep(2)
         self._arduino.close_gripper()
+        self.angles = (self.angles[0], self.angles[1], -80)
 
+        self.angles = (self.angles[0], 65, self.angles[2])
+        self.angles = (self.angles[0], 65, -60)
+        self.open_gripper()
+        self.close_gripper()
         # Raise arm
         print("Here1")
-        self.angles = (self.angles[0], 90, self.angles[2])
+        self.angles = (self.angles[0], 120, self.angles[2])
         print("Here2")
         self.angles = (self.angles[0], self.angles[1], -85)
 
         return True
 
-    def action_drop_off(self, x, y, z):
-        print("Dropping off object at", x, y, z)
+    def action_drop_off(self, idx: int, position: int):
+        drop_off_pos = [(0.18, 0.15, 0.03), (0.165, 0.155, 0.06), (0.14, 0.1, 0.12)]
+
+        x, y, z = drop_off_pos[idx]
         theta1, theta2, theta3 = self.inverse_kinematics(x, y, z)
+
+        if position == 1:
+            theta1 = 0
+        if position == 2:
+            theta1 = 30
+
+        print("Dropping off object at", x, y, z)
         print("Calculated angles", theta1, theta2, theta3)
 
         print("Moving to drop off object")
         # Ensure we are not close to ground level.
-        self.angles = (theta1, 90, -85)
+        self.angles = (theta1, 120, -85)
 
         print(self.angles)
         print("Lowering arm")
         # Lower arm
-        self.angles = (self.angles[0], self.angles[1], theta3)
+        self.angles = (self.angles[0], self.angles[1], theta3 + 10)
         self.angles = (self.angles[0], theta2, self.angles[2])
+        self.angles = (self.angles[0], self.angles[1], theta3)
         print("Opening gripper")
 
         self._arduino.open_gripper()
         # Close gripper
 
         # Raise arm
-        self.angles = (self.angles[0], 90, self.angles[2])
+        self.angles = (self.angles[0], 120, self.angles[2])
         self.angles = (self.angles[0], self.angles[1], -85)
         self._arduino.close_gripper()
 
@@ -131,11 +146,12 @@ class Hubert:
     def detect_objects(self, camera: Camera) -> List[CameraDetection]:
         self.set_camera_position()
         camera_detections = []
-        for i in np.arange(-70, 70, 20, dtype=int):
+        # for i in [-40]:
+        for i in np.arange(-40, 40, 10, dtype=int):
             self.update_angles(i, 90, -85)
             camera_detections.extend(camera.get_detected_objects_from_nn(angle=i))
 
-        return camera_detections
+        return camera.merge_objects(camera_detections, distance_threshold=0.05)
 
 
 if __name__ == "__main__":

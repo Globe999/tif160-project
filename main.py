@@ -20,9 +20,24 @@ def get_sorted_objects(sort_mode, order, objects) -> List[CameraDetection]:
     )
 
     # Remove all objects not in order
-    sorted_objects = [obj for obj in sorted_objects if getattr(obj, sort_mode) in order]
+    return_list = []
+    order_list = []
+    o_idx = 0
 
-    return sorted_objects
+    for obj in sorted_objects:
+        if getattr(obj, sort_mode) == order[o_idx]:
+            order_list.append(obj)
+        else:
+            if order_list:
+                return_list.append(order_list)
+                order_list = []
+            o_idx += 1
+            if o_idx >= len(order):
+                break
+            order_list.append(obj)
+    if order_list:
+        return_list.append(order_list)
+    return return_list
 
 
 def mock_get_objects() -> List[CameraDetection]:
@@ -66,57 +81,28 @@ def main():
     mode = "color"
     # mode = AudioInterface.get_mode()
 
-    order = ["red", "green", "blue"]
+    order = ["red", "green", "blue", "white"]
     # order = AudioInterface.get_command(mode)
 
     sorted_objects = get_sorted_objects(mode, order, camera_detections)
     print(sorted_objects)
 
-    for idx, obj in enumerate(sorted_objects):
-        print(f"Idx:{idx}, Color: {obj.color}, Shap: {obj.shape}")
-        print(f"x:{obj.global_x:.5f}\t y:{obj.global_y:.5f}\tz:{obj.global_z:.5f}")
-    for object in sorted_objects:
-        hubert.action_pick_up(object.global_x, object.global_y, object.global_z + 0.02)
-        hubert.action_drop_off(0.22, 0.22, 0.04)
+    for position, objects in enumerate(sorted_objects):
+        for idx, obj in enumerate(objects):
+            print(f"Pos: {position}, Idx:{idx}, Color: {obj.color}, Shape: {obj.shape}")
+            print(f"x:{obj.global_x:.5f}\t y:{obj.global_y:.5f}\tz:{obj.global_z:.5f}")
 
-    # # Filter the detections to find the green object
-    # green_objects = [obj for obj in res if obj.color == "red"]
+    # height = 0.04
+    for position, objects in enumerate(sorted_objects):
+        for idx, obj in enumerate(objects):
+            hubert.action_pick_up(obj.global_x, obj.global_y, obj.global_z + 0.02)
+            hubert.action_drop_off(idx=idx, position=position)
+            # height += 0.04
 
-    # if green_objects:
-    #     # Pick up the first green object found
-    #     green_object = green_objects[0]
-    #     print(
-    #         f"Found green object at \nx:{green_object.x},\ny:{green_object.y},\nz:{green_object.z}"
-    #     )
-    #     hubert.action_pick_up(green_object.x, green_object.y, green_object.z + 0.02)
-    #     hubert.action_drop_off(0.22, 0.22, 0.04)
-    # else:
-    #     print("No green objects found.")
 
-    # mock_data = mock_get_objects()
-
-    # available_sort_modes = ["shape", "color", "size"]
-
-    # available_colors = list({x.color for x in mock_data})
-    # available_shapes = list({x.shape for x in mock_data})
-    # available_sizes = list({x.size for x in mock_data})
-
-    # audio_interface = AudioInterface()
-
-    # mode = audio_interface.get_mode(available_sort_modes)
-
-    # order = audio_interface.get_command(mode)
-
-    # # sort_mode = "color"
-    # # order = ["red", "green"]
-
-    # new_list = get_sorted_objects(mode, order, mock_data)
-    # for i, (old, new) in enumerate(zip(mock_data, new_list)):
-    #     print(f"{i}: {getattr(old,mode)} -> {getattr(new,mode)}")
-
-    # sort_mode, order = get_instructions()
-    # objects = camera.get_objects()
-
+# 0.18, 0.15, 0.03
+# 0.165, 0.155, 0.06
+# 0.14, 0.1, 0.12
 
 if __name__ == "__main__":
     main()

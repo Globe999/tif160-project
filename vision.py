@@ -37,6 +37,7 @@ classNames = [
 @dataclass
 class CameraDetection:
     shape: str
+    confidence: float
     x: float
     y: float
     z: float
@@ -279,12 +280,14 @@ class Camera:
                 classification = classNames[int(cls)].split()
                 color = classification[0]
                 shape = classification[1]
+
                 x = x1 / self.width - 0.5
                 y = -1 * (y1 / self.height - 0.5)
                 w = w / self.width
                 h = h / self.height
                 entry = CameraDetection(
                     shape=shape,
+                    confidence=conf,
                     x=x + w / 2,
                     y=y - h / 2,
                     z=0,
@@ -298,58 +301,69 @@ class Camera:
                 detections.append(entry)
         cv2.imshow("frame", frame)
         cv2.waitKey(1)
+        print(f"Angle: {angle}")
+
+        for detection in detections:
+            print(
+                f"Shape: {detection.shape}, Color: {detection.color}\n x: {detection.x}, y: {detection.y}"
+            )
         return self.get_global_position(detections, camera_angle=angle)
 
     def get_global_position(self, objects: List[CameraDetection], camera_angle: int):
 
-        # length_per_pixel_x = 0.071 * 2
-        # length_per_pixel_y = 0.098 * 2
-        mid_x_pos = 0.132
-        length_per_pixel_x = 0.098 * 2
+        length_per_pixel_x = 0.071 * 2
         length_per_pixel_y = 0.098 * 2
+        mid_x_pos = 0.132
+        # length_per_pixel_x = 0.098 * 2
+        # length_per_pixel_y = 0.098 * 2
         for object in objects:
             object.global_y = np.sin(np.deg2rad(camera_angle)) * mid_x_pos + (
-                object.x * length_per_pixel_x * np.cos(np.deg2rad(camera_angle))
+                -1 * object.x * length_per_pixel_x * np.cos(np.deg2rad(camera_angle))
                 + object.y * length_per_pixel_y * np.sin(np.deg2rad(camera_angle))
             )
             object.global_x = (
                 np.cos(np.deg2rad(camera_angle)) * mid_x_pos
                 + object.y * length_per_pixel_y * np.cos(np.deg2rad(camera_angle))
-                - object.x * length_per_pixel_x * np.sin(np.deg2rad(camera_angle))
+                + object.x * length_per_pixel_x * np.sin(np.deg2rad(camera_angle))
+            )
+            print(
+                f"Object with shape {object.shape} at x: {object.x}, y: {object.y} and angle {camera_angle}\n has global x: {object.global_x}, global y: {object.global_y}"
             )
 
         return objects
 
-    def merge_objects(self, objects: List[CameraDetection], threshold):
+    def merge_objects(
+        self, camera_detections: List[CameraDetection], distance_threshold
+    ):
 
         merged_points = []
 
-        while objects:
-            point = objects.pop(0)
+        while camera_detections:
+            point = camera_detections.pop(0)
             cluster = [point]
-
-            for other_point in objects:
+            idx_to_remove = []
+            for idx, other_point in enumerate(camera_detections):
                 dist = np.sqrt(
-                    (point.global_x - point.global_x) ** 2
-                    + (other_point.global_y - other_point.global_y) ** 2
+                    (point.global_x - other_point.global_x) ** 2
+                    + (point.global_y - other_point.global_y) ** 2
                 )
-                if (
-                    (dist <= threshold)
-                    and (point.color == other_point.color)
-                    and (point.shape == other_point.shape)
-                ):
+                if (dist <= distance_threshold) and (point.color == other_point.color):
                     cluster.append(other_point)
-                    objects.remove(other_point)
+                    idx_to_remove.append(idx)
 
             # Merge all points in the cluster into a single point (average of the cluster)
             if len(cluster) > 1:
+                best_shape_index = np.argmax([p.confidence for p in cluster])
                 avg_x = sum(p.global_x for p in cluster) / len(cluster)
                 avg_y = sum(p.global_y for p in cluster) / len(cluster)
                 cluster[0].global_x = avg_x
                 cluster[0].global_y = avg_y
+                cluster[0].shape = cluster[best_shape_index].shape
                 merged_points.append(cluster[0])
             else:
                 merged_points.append(point)
+            for idx in sorted(idx_to_remove, reverse=True):
+                camera_detections.pop(idx)
 
         return merged_points
 

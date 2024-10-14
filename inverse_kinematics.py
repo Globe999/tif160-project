@@ -7,7 +7,7 @@ def dumb_but_optimized_inverse_kinematics(x, y, z):
         np.arange(-90, 91, 1) * np.pi / 180
     )  # range for theta0 (0 to 180 degrees)
     theta1_range = (
-        np.arange(0, 181, 1) * np.pi / 180
+        np.arange(30, 181, 1) * np.pi / 180
     )  # range for theta1 (0 to 180 degrees)
     theta2_range = (
         np.arange(-90, 0, 1) * np.pi / 180

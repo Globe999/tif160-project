@@ -70,7 +70,7 @@ class Servo:
 
     @position.setter
     def position(self, value):
-        print("RECIEVED POSITION", value)
+        # print("RECIEVED POSITION", value)
 
         if value < self.min:
             print("Warn: Value less than min - ", self.name)
@@ -179,8 +179,8 @@ class ArduinoSerial:
 
     def close_gripper(self):
         self._gripper_open = False
-        self.servos[self.GRIPPER].position = 2050
-        # self.servos[self.GRIPPER].position = 1050
+        # self.servos[self.GRIPPER].position = 2050
+        self.servos[self.GRIPPER].position = 1050
         self.send_to_arduino(wait_for_reply=True)
 
     def connect(self):
@@ -209,7 +209,7 @@ class ArduinoSerial:
         servo_positions = ",".join([f"{servo.position:04d}" for servo in self.servos])
         send_str += servo_positions
         send_str += chr(self.end_marker)
-        print(f"Sent from PC -- {send_str}")
+        # print(f"Sent from PC -- {send_str}")
         self.ser.write(send_str.encode())
 
         if wait_for_reply:
@@ -217,7 +217,7 @@ class ArduinoSerial:
                 pass
 
             dataRecvd = self.recv_from_arduino()
-            print("Reply Received  " + dataRecvd)
+            # print("Reply Received  " + dataRecvd)
             return dataRecvd
         else:
             return True
@@ -254,7 +254,7 @@ class ArduinoSerial:
                 pass
 
             msg = self.recv_from_arduino()
-            print(msg)
+            # print(msg)
 
 
 if __name__ == "__main__":
