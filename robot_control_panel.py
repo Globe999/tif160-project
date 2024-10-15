@@ -183,9 +183,9 @@ class ControlPanel(tk.Tk):
 
     def update_video_feed(self):
         try:
-            # frame = self.camera.grab_frame()
-            # frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            frame = self.camera.run_object_detection()
+            frame = self.camera.grab_frame()
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            # frame = self.camera.run_object_detection()
             image = Image.fromarray(frame)
             image = ImageTk.PhotoImage(image)
             self.canvas.create_image(0, 0, anchor=tk.NW, image=image)
@@ -264,10 +264,10 @@ class ControlPanel(tk.Tk):
         # self.hubert.set_sort_mode()
         # self.hubert.set_sort_order()
 
-        self.hubert.sort_mode = "shape"
+        self.hubert.sort_mode = ["shape", "color"]
         # mode = AudioInterface.get_mode()
 
-        self.hubert.sort_order = ["hexagon", "cylinder", "star"]
+        self.hubert.sort_order = [["hexagon", "cylinder", "star"], ["red", "green"]]
         sorted_objects = self.hubert.get_sorted_objects(camera_detections)
         for position, objects in enumerate(sorted_objects):
             for idx, obj in enumerate(objects):

@@ -160,34 +160,30 @@ class Hubert:
         return camera.merge_objects(camera_detections, distance_threshold=0.06)
 
     def get_sorted_objects(
-        self, detections: List[CameraDetection]
+        self,
+        objects: List[CameraDetection],
     ) -> List[CameraDetection]:
+        # Create rank mappings for each sort mode (primary and secondary)
+        ranks = [
+            {value: i for i, value in enumerate(order_list)}
+            for order_list in self.sort_order
+        ]
 
-        # Magic
-        rank = {value: i for i, value in enumerate(self.sort_order)}
+        # Sort based on primary and secondary modes (tuple sorting)
         sorted_objects = sorted(
-            detections, key=lambda x: rank.get(getattr(x, self.sort_mode), float("inf"))
+            objects,
+            key=lambda x: (
+                ranks[0].get(
+                    getattr(x, self.sort_mode[0]), float("inf")
+                ),  # Primary sort mode (e.g., shape)
+                ranks[1].get(
+                    getattr(x, self.sort_mode[1]), float("inf")
+                ),  # Secondary sort mode (e.g., color)
+            ),
         )
+        # Return the sorted list without grouping
 
-        # Remove all objects not in order
-        return_list = []
-        order_list = []
-        o_idx = 0
-
-        for obj in sorted_objects:
-            if getattr(obj, self.sort_mode) == self.sort_order[o_idx]:
-                order_list.append(obj)
-            else:
-                if order_list:
-                    return_list.append(order_list)
-                    order_list = []
-                o_idx += 1
-                if o_idx >= len(self.sort_order):
-                    break
-                order_list.append(obj)
-        if order_list:
-            return_list.append(order_list)
-        return return_list
+        return sorted_objects
 
 
 if __name__ == "__main__":
