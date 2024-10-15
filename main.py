@@ -41,22 +41,27 @@ from vision import Camera, CameraDetection
 
 from typing import List
 
-def get_sorted_objects(sort_modes: List[str], order: List[List[str]], objects: List['CameraDetection']) -> List['CameraDetection']:
+
+def get_sorted_objects(
+    sort_modes: List[str], order: List[List[str]], objects: List["CameraDetection"]
+) -> List["CameraDetection"]:
     # Create rank mappings for each sort mode (primary and secondary)
     ranks = [{value: i for i, value in enumerate(order_list)} for order_list in order]
-    
+
     # Sort based on primary and secondary modes (tuple sorting)
     sorted_objects = sorted(
-        objects, 
+        objects,
         key=lambda x: (
-            ranks[0].get(getattr(x, sort_modes[0]), float('inf')),  # Primary sort mode (e.g., shape)
-            ranks[1].get(getattr(x, sort_modes[1]), float('inf'))   # Secondary sort mode (e.g., color)
-        )
+            ranks[0].get(
+                getattr(x, sort_modes[0]), float("inf")
+            ),  # Primary sort mode (e.g., shape)
+            ranks[1].get(
+                getattr(x, sort_modes[1]), float("inf")
+            ),  # Secondary sort mode (e.g., color)
+        ),
     )
-    
     # Return the sorted list without grouping
     return sorted_objects
-
 
 
 def mock_get_objects() -> List[CameraDetection]:
@@ -79,8 +84,8 @@ def mock_get_objects() -> List[CameraDetection]:
             confidence=0.8,
             global_x=1,
             global_y=1,
-            global_z = 1,
-            angle = 40,
+            global_z=1,
+            angle=40,
         )
         mock_data.append(detection)
 
@@ -88,7 +93,6 @@ def mock_get_objects() -> List[CameraDetection]:
 
 
 def main():
-    
 
     sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
@@ -104,10 +108,10 @@ def main():
     print(camera_detections)
     # camera_detections = camera.merge_objects(camera_detections, threshold=0.02)
 
-    mode = "shape"
+    mode = ["shape", "color"]
     # mode = AudioInterface.get_mode()
 
-    order = ["hexagon", "cylinder", "star"]
+    order = [["hexagon", "cylinder", "star"], ["red", "green"]]
     # order = ["red", "green", "blue", "white"]
     # order = AudioInterface.get_command(mode)
 
