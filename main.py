@@ -54,14 +54,34 @@ def get_sorted_objects(
         key=lambda x: (
             ranks[0].get(
                 getattr(x, sort_modes[0]), float("inf")
-            ),  # Primary sort mode (e.g., shape)
+            ),  # Primary sort mode (shape)
             ranks[1].get(
                 getattr(x, sort_modes[1]), float("inf")
-            ),  # Secondary sort mode (e.g., color)
+            ),  # Secondary sort mode (color)
         ),
     )
-    # Return the sorted list without grouping
-    return sorted_objects
+
+    # Remove all objects not in order and group them by the primary sort mode
+    return_list = []
+    order_list = []
+    o_idx = 0
+
+    for obj in sorted_objects:
+        if getattr(obj, sort_modes[0]) == order[0][o_idx]:
+            order_list.append(obj)
+        else:
+            if order_list:
+                return_list.append(order_list)
+                order_list = []
+            o_idx += 1
+            if o_idx >= len(order[0]):
+                break
+            order_list.append(obj)
+
+    if order_list:
+        return_list.append(order_list)
+
+    return return_list
 
 
 def mock_get_objects() -> List[CameraDetection]:
