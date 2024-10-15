@@ -1,5 +1,8 @@
 from dataclasses import dataclass
 from pathlib import Path
+import queue
+import threading
+import time
 from typing import List
 import cvzone
 import cv2
@@ -57,42 +60,60 @@ class Camera:
         self.model = YOLO(
             Path().cwd() / "neural_network" / "weights" / "best_100_epochs.pt"
         )
+        self.frame_queue = queue.Queue(maxsize=10)
+        self.capture_thread = threading.Thread(target=self._capture_frames)
+        self.capture_thread.daemon = True
+        self.capture_thread.start()
+
+    def _capture_frames(self):
+        cap = cv2.VideoCapture(self.index)
+        while True:
+            ret, frame = cap.read()
+            if not ret or frame is None:
+                print("Error: Could not open image.")
+                continue
+            if not self.frame_queue.full():
+                self.frame_queue.put(frame)
+            time.sleep(0.01)  # Add a small delay to avoid busy-waiting
 
     def grab_frame(self):
-        cap = cv2.VideoCapture(self.index)
-        ret, frame = cap.read()
-        if not ret or frame is None:
-            raise Exception("Error: Could not open image.")
+        retries = 20
+        while retries > 0:
+            if not self.frame_queue.empty():
+                return self.frame_queue.get()
+            retries -= 1
+            time.sleep(0.1)  # Wait for a short time before retrying
+        raise Exception("Error: No frames available.")
+
+    def run_object_detection(self, frame=None):
+        if frame is None:
+            frame = self.grab_frame()
+        results = self.model(
+            frame,
+            stream=False,
+        )
+
+        for r in results:
+            boxes = r.boxes
+            for box in boxes:
+                x1, y1, x2, y2 = box.xyxy[0]
+                x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
+                w, h = x2 - x1, y2 - y1
+                cvzone.cornerRect(frame, (x1, y1, w, h))
+
+                conf = math.ceil((box.conf[0] * 100)) / 100
+
+                cls = box.cls[0]
+                name = classNames[int(cls)]
+
+                cvzone.putTextRect(
+                    frame,
+                    f"{name} " f"{conf}",
+                    (max(0, x1), max(35, y1)),
+                    scale=0.5,
+                    thickness=1,
+                )
         return frame
-
-    def run_object_detection(self):
-        while True:
-            img = self.grab_frame()
-            results = self.model(img, stream=True)
-
-            for r in results:
-                boxes = r.boxes
-                for box in boxes:
-                    x1, y1, x2, y2 = box.xyxy[0]
-                    x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
-                    w, h = x2 - x1, y2 - y1
-                    cvzone.cornerRect(img, (x1, y1, w, h))
-
-                    conf = math.ceil((box.conf[0] * 100)) / 100
-
-                    cls = box.cls[0]
-                    name = classNames[int(cls)]
-
-                    cvzone.putTextRect(
-                        img,
-                        f"{name} " f"{conf}",
-                        (max(0, x1), max(35, y1)),
-                        scale=0.5,
-                        thickness=1,
-                    )
-
-            cv2.imshow("Image", img)
-            cv2.waitKey(1)
 
     def get_detected_objects(self, angle: int, frame=None) -> List[CameraDetection]:
         if frame is None:
