@@ -126,10 +126,11 @@ def main():
     print(camera_detections)
     # camera_detections = camera.merge_objects(camera_detections, threshold=0.02)
 
-    mode = "color"
+    mode = "shape"
     # mode = AudioInterface.get_mode()
 
-    order = ["red", "green", "blue", "white"]
+    order = ["hexagon", "cylinder", "star"]
+    # order = ["red", "green", "blue", "white"]
     # order = AudioInterface.get_command(mode)
 
     sorted_objects = get_sorted_objects(mode, order, camera_detections)

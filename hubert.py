@@ -51,6 +51,9 @@ class Hubert:
     def set_sort_order(self):
         self.sort_order = self._voice.get_sort_order(self.sort_mode)
 
+    def say(self, text):
+        self._voice.output_audio(text)
+
     def update_position(self, x, y, z):
         self.position = np.array([x, y, z])
         self.angles = self.inverse_kinematics(x, y, z)
@@ -74,24 +77,23 @@ class Hubert:
         print(self.angles)
         print("Lowering arm")
         # Lower arm
-        self.angles = (self.angles[0], self.angles[1], theta3)
-        print("Opening gripper")
         self._arduino.open_gripper()
-        self.angles = (self.angles[0], theta2 - 5, self.angles[2])
+        self.angles = (self.angles[0], theta2 - 5, theta3)
+        print("Opening gripper")
+        # self.angles = (self.angles[0], theta2 - 5, self.angles[2])
         # Close gripper
         time.sleep(2)
         self._arduino.close_gripper()
-        self.angles = (self.angles[0], self.angles[1], -80)
+        self.angles = (self.angles[0], 65, -80)
 
-        self.angles = (self.angles[0], 65, self.angles[2])
+        # self.angles = (self.angles[0], 65, self.angles[2])
         self.angles = (self.angles[0], 65, -60)
         self.open_gripper()
         self.close_gripper()
         # Raise arm
         print("Here1")
-        self.angles = (self.angles[0], 120, self.angles[2])
-        print("Here2")
-        self.angles = (self.angles[0], self.angles[1], -85)
+        self.angles = (self.angles[0], 120, -85)
+        # self.angles = (self.angles[0], self.angles[1], -85)
 
         return True
 
@@ -102,9 +104,9 @@ class Hubert:
         theta1, theta2, theta3 = self.inverse_kinematics(x, y, z)
 
         if position == 1:
-            theta1 = 0
-        if position == 2:
             theta1 = 30
+        if position == 2:
+            theta1 = 0
 
         print("Dropping off object at", x, y, z)
         print("Calculated angles", theta1, theta2, theta3)
@@ -116,17 +118,17 @@ class Hubert:
         print(self.angles)
         print("Lowering arm")
         # Lower arm
-        self.angles = (self.angles[0], self.angles[1], theta3 + 10)
-        self.angles = (self.angles[0], theta2, self.angles[2])
-        self.angles = (self.angles[0], self.angles[1], theta3)
+        self.angles = (self.angles[0], theta2, theta3)
+        # self.angles = (self.angles[0], theta2, self.angles[2])
+        # self.angles = (self.angles[0], self.angles[1], theta3)
         print("Opening gripper")
 
         self._arduino.open_gripper()
         # Close gripper
 
         # Raise arm
-        self.angles = (self.angles[0], 120, self.angles[2])
-        self.angles = (self.angles[0], self.angles[1], -85)
+        self.angles = (self.angles[0], 120, -85)
+        # self.angles = (self.angles[0], self.angles[1], -85)
         self._arduino.close_gripper()
 
         return True
@@ -149,9 +151,43 @@ class Hubert:
         # for i in [-40]:
         for i in np.arange(-40, 40, 10, dtype=int):
             self.update_angles(i, 90, -85)
-            camera_detections.extend(camera.get_detected_objects_from_nn(angle=i))
+            time.sleep(1)
+            frame = camera.grab_frame()
+            camera_detections.extend(
+                camera.get_detected_objects_from_nn(frame=frame, angle=i)
+            )
 
-        return camera.merge_objects(camera_detections, distance_threshold=0.05)
+        return camera.merge_objects(camera_detections, distance_threshold=0.06)
+
+    def get_sorted_objects(
+        self, detections: List[CameraDetection]
+    ) -> List[CameraDetection]:
+
+        # Magic
+        rank = {value: i for i, value in enumerate(self.sort_order)}
+        sorted_objects = sorted(
+            detections, key=lambda x: rank.get(getattr(x, self.sort_mode), float("inf"))
+        )
+
+        # Remove all objects not in order
+        return_list = []
+        order_list = []
+        o_idx = 0
+
+        for obj in sorted_objects:
+            if getattr(obj, self.sort_mode) == self.sort_order[o_idx]:
+                order_list.append(obj)
+            else:
+                if order_list:
+                    return_list.append(order_list)
+                    order_list = []
+                o_idx += 1
+                if o_idx >= len(self.sort_order):
+                    break
+                order_list.append(obj)
+        if order_list:
+            return_list.append(order_list)
+        return return_list
 
 
 if __name__ == "__main__":

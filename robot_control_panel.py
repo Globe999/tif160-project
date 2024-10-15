@@ -1,10 +1,11 @@
 import tkinter as tk
 from tkinter import ttk
+from typing import List
 from PIL import Image, ImageTk
 import cv2
 import threading
 from hubert import Hubert
-from vision import Camera
+from vision import Camera, CameraDetection
 
 
 class ControlPanel(tk.Tk):
@@ -166,13 +167,13 @@ class ControlPanel(tk.Tk):
         close_gripper_button.grid(row=1, column=0, pady=5)
         self.buttons.append(close_gripper_button)
 
-        detect_objects_button = ttk.Button(
+        run_sorting_loop_button = ttk.Button(
             controls_frame,
-            text="Detect Objects",
-            command=self.detect_objects,
+            text="Run sorting loop",
+            command=self.run_in_thread(self.run_sorting_loop),
         )
-        detect_objects_button.grid(row=1, column=2, padx=10, pady=5)
-        self.buttons.append(detect_objects_button)
+        run_sorting_loop_button.grid(row=1, column=2, padx=10, pady=5)
+        self.buttons.append(run_sorting_loop_button)
 
     def create_video_feed(self):
         self.video_frame = ttk.Frame(self)
@@ -181,13 +182,17 @@ class ControlPanel(tk.Tk):
         self.canvas.pack()
 
     def update_video_feed(self):
-        frame = self.camera.grab_frame()
-        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        image = Image.fromarray(frame)
-        image = ImageTk.PhotoImage(image)
-        self.canvas.create_image(0, 0, anchor=tk.NW, image=image)
-        self.canvas.image = image
-        self.after(1, self.update_video_feed)
+        try:
+            # frame = self.camera.grab_frame()
+            # frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            frame = self.camera.run_object_detection()
+            image = Image.fromarray(frame)
+            image = ImageTk.PhotoImage(image)
+            self.canvas.create_image(0, 0, anchor=tk.NW, image=image)
+            self.canvas.image = image
+        except Exception as e:
+            print(f"Error grabbing frame: {e}")
+        self.after(10, self.update_video_feed)
 
     def open_gripper(self):
         self.hubert.open_gripper()
@@ -243,8 +248,43 @@ class ControlPanel(tk.Tk):
         for button in self.buttons:
             button["state"] = "normal"
 
-    def detect_objects(self):
-        self.hubert.detect_objects(self.camera)
+    def run_sorting_loop(self):
+        self.hubert.set_camera_position()
+        camera_detections: List[CameraDetection] = self.hubert.detect_objects(
+            self.camera
+        )
+        self.hubert.angles = [0, 90, -85]
+
+        if not camera_detections:
+            self.hubert.say("No objects found.")
+            return
+        self.hubert.say(
+            f"Starting sorting loop. I have found {len(camera_detections)} objects."
+        )
+        # self.hubert.set_sort_mode()
+        # self.hubert.set_sort_order()
+
+        self.hubert.sort_mode = "shape"
+        # mode = AudioInterface.get_mode()
+
+        self.hubert.sort_order = ["hexagon", "cylinder", "star"]
+        sorted_objects = self.hubert.get_sorted_objects(camera_detections)
+        for position, objects in enumerate(sorted_objects):
+            for idx, obj in enumerate(objects):
+                print(
+                    f"Pos: {position}, Idx:{idx}, Color: {obj.color}, Shape: {obj.shape}"
+                )
+                print(
+                    f"x:{obj.global_x:.5f}\t y:{obj.global_y:.5f}\tz:{obj.global_z:.5f}"
+                )
+                self.hubert.say(f"Picking up a {obj.color} {obj.shape}.")
+                self.hubert.action_pick_up(
+                    obj.global_x, obj.global_y, obj.global_z + 0.02
+                )
+                self.hubert.say(f"Moving to drop off position {position}.")
+                self.hubert.action_drop_off(idx=idx, position=position)
+        # height = 0.04
+        print("Done")
         self.update_info_panel()
 
     def run_in_thread(self, func, *args):

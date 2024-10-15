@@ -156,6 +156,46 @@ void servo_elbow(const int new_pos) {
   delay(10);
 }
 
+void move_shoulder_and_elbow_simultaneously(const int shoulder_pos, const int elbow_pos) {
+  int shoulder_diff, shoulder_steps, shoulder_now, shoulder_CurrPwm, shoulder_NewPwm;
+  int elbow_diff, elbow_steps, elbow_now, elbow_CurrPwm, elbow_NewPwm;
+  int delta = 6;
+
+  // Current servo values
+  shoulder_now = curr_pos[3];
+  shoulder_CurrPwm = shoulder_now;
+  shoulder_NewPwm = shoulder_pos;
+
+  elbow_now = curr_pos[4];
+  elbow_CurrPwm = elbow_now;
+  elbow_NewPwm = elbow_pos;
+
+  // Determine iteration "diff" from old to new position
+  shoulder_diff = (shoulder_NewPwm - shoulder_CurrPwm) / abs(shoulder_NewPwm - shoulder_CurrPwm); // +1 if NewPwm is bigger than CurrPwm, -1 otherwise
+  shoulder_steps = abs(shoulder_NewPwm - shoulder_CurrPwm);
+
+  elbow_diff = (elbow_NewPwm - elbow_CurrPwm) / abs(elbow_NewPwm - elbow_CurrPwm); // +1 if NewPwm is bigger than CurrPwm, -1 otherwise
+  elbow_steps = abs(elbow_NewPwm - elbow_CurrPwm);
+
+  // Move both servos simultaneously
+  for (int i = 0; i < max(shoulder_steps, elbow_steps); i += delta) {
+    if (i < shoulder_steps) {
+      shoulder_now = shoulder_now + delta * shoulder_diff;
+      shoulder.writeMicroseconds(shoulder_now);
+    }
+    if (i < elbow_steps) {
+      elbow_now = elbow_now + delta * elbow_diff;
+      elbow.writeMicroseconds(elbow_now);
+    }
+    delay(20);
+  }
+
+  // Update current positions
+  curr_pos[3] = shoulder_now;
+  curr_pos[4] = elbow_now;
+  delay(10);
+}
+
 //Servo update function
 void servo_gripper_ex(const int new_pos) {
 
@@ -245,8 +285,9 @@ void loop() {
     servo_body_ex(new_positions[0]);
     servo_neck_pan(new_positions[1]);
     servo_neck_tilt(new_positions[2]);
-    servo_elbow(new_positions[4]);
-    servo_shoulder(new_positions[3]);
+    move_shoulder_and_elbow_simultaneously(new_positions[3], new_positions[4]);
+    // servo_elbow(new_positions[4]);
+    // servo_shoulder(new_positions[3]);
     servo_gripper_ex(new_positions[5]);
     showNewData();
     newData = false;
