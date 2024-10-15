@@ -170,7 +170,7 @@ class ControlPanel(tk.Tk):
         run_sorting_loop_button = ttk.Button(
             controls_frame,
             text="Run sorting loop",
-            command=self.run_in_thread(self.run_sorting_loop),
+            command=lambda: self.run_in_thread(self.run_sorting_loop),
         )
         run_sorting_loop_button.grid(row=1, column=2, padx=10, pady=5)
         self.buttons.append(run_sorting_loop_button)
@@ -264,7 +264,7 @@ class ControlPanel(tk.Tk):
         # self.hubert.set_sort_mode()
         # self.hubert.set_sort_order()
 
-        self.hubert.sort_mode = ["shape", "color"]
+        self.hubert.sort_mode = ["shape"]
         # mode = AudioInterface.get_mode()
 
         self.hubert.sort_order = [["hexagon", "cylinder", "star"], ["red", "green"]]
@@ -285,6 +285,7 @@ class ControlPanel(tk.Tk):
                 self.hubert.action_drop_off(idx=idx, position=position)
         # height = 0.04
         print("Done")
+        self.hubert.say("I AM DONE")
         self.update_info_panel()
 
     def run_in_thread(self, func, *args):

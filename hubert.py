@@ -181,9 +181,26 @@ class Hubert:
                 ),  # Secondary sort mode (e.g., color)
             ),
         )
-        # Return the sorted list without grouping
+        return_list = []
+        order_list = []
+        o_idx = 0
 
-        return sorted_objects
+        for obj in sorted_objects:
+            if getattr(obj, self.sort_mode[0]) == self.sort_order[0][o_idx]:
+                order_list.append(obj)
+            else:
+                if order_list:
+                    return_list.append(order_list)
+                    order_list = []
+                o_idx += 1
+                if o_idx >= len(self.sort_order[0]):
+                    break
+                order_list.append(obj)
+
+        if order_list:
+            return_list.append(order_list)
+
+        return return_list
 
 
 if __name__ == "__main__":
