@@ -6,7 +6,7 @@ class AudioInterface:
     def __init__(self) -> None:
         self.mic = sr.Microphone(device_index=0)
         self.r = sr.Recognizer()
-        self.engine = pyttsx3.init()
+        self.engine = pyttsx3.init(driverName="espeak")
         self.mode = []
         self.instructions = []
 
@@ -44,7 +44,7 @@ class AudioInterface:
                         t = 1
                     else:
                         self.output_audio("and m")
-                        
+
                 return self.mode
             self.output_audio("Please repeat what mode you want")
 
@@ -91,13 +91,24 @@ class AudioInterface:
                         elif m == "color" and word in colors:
                             temp_list.append(word)
                     instructions.append(temp_list)
-            if len(instructions)==1:
+            if len(instructions) == 1:
                 text = "Order set to " + ", ".join(instructions[0])
                 self.output_audio(text)
                 return instructions
-            elif len(instructions)==2:
-                text = "Order set to " + ", ".join(instructions[0]) + "and then ".join(instructions[1])
+            elif len(instructions) == 2:
+                text = (
+                    "Order set to "
+                    + ", ".join(instructions[0])
+                    + "and then ".join(instructions[1])
+                )
                 self.output_audio(text)
                 return instructions
 
             self.output_audio("Please repeat what order you want")
+
+
+if __name__ == "__main__":
+    audio = AudioInterface()
+    mode = audio.get_sort_mode()
+    order = audio.get_sort_order(mode)
+    print(mode, order)

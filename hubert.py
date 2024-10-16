@@ -168,6 +168,29 @@ class Hubert:
             {value: i for i, value in enumerate(order_list)}
             for order_list in self.sort_order
         ]
+        sorted_objects = []
+        if len(self.sort_mode) == 2:
+
+            sorted_objects = sorted(
+                objects,
+                key=lambda x: (
+                    ranks[0].get(
+                        getattr(x, sort_modes[0]), float("inf")
+                    ),  # Primary sort mode (shape)
+                    ranks[1].get(
+                        getattr(x, sort_modes[1]), float("inf")
+                    ),  # Secondary sort mode (color)
+                ),
+            )
+        else:
+            sorted_objects = sorted(
+                objects,
+                key=lambda x: (
+                    ranks[0].get(
+                        getattr(x, sort_modes[0]), float("inf")
+                    ),  # Primary sort mode (shape)
+                ),
+            )
 
         # Sort based on primary and secondary modes (tuple sorting)
         sorted_objects = sorted(

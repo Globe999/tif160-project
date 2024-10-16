@@ -93,7 +93,9 @@ class Servo:
 
 
 class ArduinoSerial:
-    def __init__(self, port: str = "/dev/ttyACM0", baud: int = 57600) -> None:
+    def __init__(
+        self, port: str = "/dev/ttyACM0", baud: int = 57600, mock=False
+    ) -> None:
         self.serPort = port
         self.baud = baud
         self.BODY = 0
@@ -103,7 +105,7 @@ class ArduinoSerial:
         self.ELBOW = 4
         self.GRIPPER = 5
         self._gripper_open = False
-
+        self.mock = mock
         self.servos: List[Servo] = [
             Servo(
                 position=1700,
@@ -184,18 +186,20 @@ class ArduinoSerial:
         self.send_to_arduino(wait_for_reply=True)
 
     def connect(self):
-        try:
-            self.ser = serial.Serial(self.serPort, self.baud)
-        except serial.serialutil.SerialException as e:
-            print("Error opening serial port: " + str(e))
-            print("Trying other port...")
-            self.serPort = "/dev/ttyACM1"
-            self.ser = serial.Serial(self.serPort, self.baud)
+
+        if not self.mock:
+            try:
+                self.ser = serial.Serial(self.serPort, self.baud)
+            except serial.serialutil.SerialException as e:
+                print("Error opening serial port: " + str(e))
+                print("Trying other port...")
+                self.serPort = "/dev/ttyACM1"
+                self.ser = serial.Serial(self.serPort, self.baud)
 
         print("Serial port " + self.serPort + " opened  Baudrate " + str(self.baud))
 
     def close(self):
-        if self.ser and self.ser.is_open:
+        if self.ser and self.ser.is_open and not self.mock:
             self.ser.close()
             print("Serial port " + self.serPort + " closed")
 
@@ -210,7 +214,12 @@ class ArduinoSerial:
         send_str += servo_positions
         send_str += chr(self.end_marker)
         # print(f"Sent from PC -- {send_str}")
-        self.ser.write(send_str.encode())
+        if self.mock:
+            print(f"Emulating serial write - {send_str}")
+            time.sleep(1)
+            return True
+        else:
+            self.ser.write(send_str.encode())
 
         if wait_for_reply:
             while self.ser.inWaiting() == 0:
@@ -248,6 +257,8 @@ class ArduinoSerial:
         return ck
 
     def wait_for_arduino(self):
+        if self.mock:
+            return
         msg = ""
         while msg.find("Arduino is ready") == -1:
             while self.ser.inWaiting() == 0:
@@ -258,7 +269,7 @@ class ArduinoSerial:
 
 
 if __name__ == "__main__":
-    arduino = ArduinoSerial()
+    arduino = ArduinoSerial(mock=True)
 
     arduino.wait_for_arduino()
 

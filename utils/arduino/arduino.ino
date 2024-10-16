@@ -302,8 +302,6 @@ void recvWithStartEndMarkers(bool *newData) {
     char startMarker = '<';
     char endMarker = '>';
     char rc;
-
-
     while (Serial.available() > 0 && *newData == false) {
         rc = Serial.read();
 
