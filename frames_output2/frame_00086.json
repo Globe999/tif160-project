@@ -1,0 +1,146 @@
+{
+  "version": "0.3.3",
+  "flags": {},
+  "shapes": [
+    {
+      "label": "blue star",
+      "text": "",
+      "points": [
+        [
+          439.0,
+          35.0
+        ],
+        [
+          546.0,
+          142.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "red cube",
+      "text": "",
+      "points": [
+        [
+          218.0,
+          0.0
+        ],
+        [
+          329.0,
+          129.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "red star",
+      "text": "",
+      "points": [
+        [
+          82.0,
+          136.0
+        ],
+        [
+          203.0,
+          264.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "red star",
+      "text": "",
+      "points": [
+        [
+          217.0,
+          236.0
+        ],
+        [
+          291.0,
+          316.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "red cylinder",
+      "text": "",
+      "points": [
+        [
+          318.0,
+          139.0
+        ],
+        [
+          383.0,
+          221.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "green cube",
+      "text": "",
+      "points": [
+        [
+          357.0,
+          253.0
+        ],
+        [
+          480.0,
+          375.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "red hexagon",
+      "text": "",
+      "points": [
+        [
+          482.0,
+          209.0
+        ],
+        [
+          603.0,
+          312.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "blue cube",
+      "text": "",
+      "points": [
+        [
+          517.0,
+          349.0
+        ],
+        [
+          638.0,
+          479.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    }
+  ],
+  "imagePath": "frame_00086.jpg",
+  "imageData": null,
+  "imageHeight": 480,
+  "imageWidth": 640
+}

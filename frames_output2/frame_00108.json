@@ -1,0 +1,129 @@
+{
+  "version": "0.3.3",
+  "flags": {},
+  "shapes": [
+    {
+      "label": "green star",
+      "text": "",
+      "points": [
+        [
+          256.0,
+          185.0
+        ],
+        [
+          343.0,
+          296.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "green hexagon",
+      "text": "",
+      "points": [
+        [
+          184.0,
+          63.0
+        ],
+        [
+          252.0,
+          155.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "white cube",
+      "text": "",
+      "points": [
+        [
+          74.0,
+          92.0
+        ],
+        [
+          194.0,
+          215.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "white hexagon",
+      "text": "",
+      "points": [
+        [
+          399.0,
+          225.0
+        ],
+        [
+          510.0,
+          324.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "blue hexagon",
+      "text": "",
+      "points": [
+        [
+          105.0,
+          312.0
+        ],
+        [
+          212.0,
+          414.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "red cylinder",
+      "text": "",
+      "points": [
+        [
+          279.0,
+          353.0
+        ],
+        [
+          374.0,
+          452.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "green hexagon",
+      "text": "",
+      "points": [
+        [
+          0.0,
+          282.0
+        ],
+        [
+          71.0,
+          386.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    }
+  ],
+  "imagePath": "frame_00108.jpg",
+  "imageData": null,
+  "imageHeight": 480,
+  "imageWidth": 640
+}
