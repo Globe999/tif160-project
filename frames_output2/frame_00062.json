@@ -1,0 +1,129 @@
+{
+  "version": "0.3.3",
+  "flags": {},
+  "shapes": [
+    {
+      "label": "white cylinder",
+      "text": "",
+      "points": [
+        [
+          326.0,
+          181.0
+        ],
+        [
+          422.0,
+          282.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "white cube",
+      "text": "",
+      "points": [
+        [
+          124.0,
+          44.0
+        ],
+        [
+          243.0,
+          169.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "red cylinder",
+      "text": "",
+      "points": [
+        [
+          291.0,
+          45.0
+        ],
+        [
+          383.0,
+          153.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "red hexagon",
+      "text": "",
+      "points": [
+        [
+          16.0,
+          201.0
+        ],
+        [
+          146.0,
+          302.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "blue cube",
+      "text": "",
+      "points": [
+        [
+          173.0,
+          212.0
+        ],
+        [
+          291.0,
+          331.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "green cube",
+      "text": "",
+      "points": [
+        [
+          0.0,
+          331.0
+        ],
+        [
+          151.0,
+          465.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "green star",
+      "text": "",
+      "points": [
+        [
+          0.0,
+          44.0
+        ],
+        [
+          92.0,
+          156.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    }
+  ],
+  "imagePath": "frame_00062.jpg",
+  "imageData": null,
+  "imageHeight": 480,
+  "imageWidth": 640
+}

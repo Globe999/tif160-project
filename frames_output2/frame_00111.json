@@ -1,0 +1,113 @@
+{
+  "version": "0.3.3",
+  "flags": {},
+  "shapes": [
+    {
+      "label": "green star",
+      "text": "",
+      "points": [
+        [
+          224.0,
+          151.0
+        ],
+        [
+          315.0,
+          264.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "green hexagon",
+      "text": "",
+      "points": [
+        [
+          143.0,
+          32.0
+        ],
+        [
+          218.0,
+          127.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "white hexagon",
+      "text": "",
+      "points": [
+        [
+          375.0,
+          180.0
+        ],
+        [
+          483.0,
+          282.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "white cube",
+      "text": "",
+      "points": [
+        [
+          32.0,
+          66.0
+        ],
+        [
+          161.0,
+          195.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "blue hexagon",
+      "text": "",
+      "points": [
+        [
+          81.0,
+          291.0
+        ],
+        [
+          195.0,
+          392.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "red cylinder",
+      "text": "",
+      "points": [
+        [
+          260.0,
+          318.0
+        ],
+        [
+          354.0,
+          416.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    }
+  ],
+  "imagePath": "frame_00111.jpg",
+  "imageData": null,
+  "imageHeight": 480,
+  "imageWidth": 640,
+  "text": ""
+}

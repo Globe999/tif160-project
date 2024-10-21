@@ -1,0 +1,129 @@
+{
+  "version": "0.3.3",
+  "flags": {},
+  "shapes": [
+    {
+      "label": "green hexagon",
+      "text": "",
+      "points": [
+        [
+          521.0,
+          223.0
+        ],
+        [
+          639.0,
+          319.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "red hexagon",
+      "text": "",
+      "points": [
+        [
+          364.0,
+          214.0
+        ],
+        [
+          472.0,
+          313.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "green cylinder",
+      "text": "",
+      "points": [
+        [
+          234.0,
+          276.0
+        ],
+        [
+          301.0,
+          345.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "green cube",
+      "text": "",
+      "points": [
+        [
+          193.0,
+          98.0
+        ],
+        [
+          311.0,
+          230.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "red cube",
+      "text": "",
+      "points": [
+        [
+          344.0,
+          26.0
+        ],
+        [
+          425.0,
+          130.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "white cylinder",
+      "text": "",
+      "points": [
+        [
+          467.0,
+          55.0
+        ],
+        [
+          562.0,
+          155.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "blue hexagon",
+      "text": "",
+      "points": [
+        [
+          523.0,
+          382.0
+        ],
+        [
+          638.0,
+          479.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    }
+  ],
+  "imagePath": "frame_00153.jpg",
+  "imageData": null,
+  "imageHeight": 480,
+  "imageWidth": 640
+}

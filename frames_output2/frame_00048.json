@@ -1,0 +1,180 @@
+{
+  "version": "0.3.3",
+  "flags": {},
+  "shapes": [
+    {
+      "label": "red cylinder",
+      "text": "",
+      "points": [
+        [
+          497.0,
+          105.0
+        ],
+        [
+          612.0,
+          209.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "red cylinder",
+      "text": "",
+      "points": [
+        [
+          497.0,
+          252.0
+        ],
+        [
+          589.0,
+          320.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "green cylinder",
+      "text": "",
+      "points": [
+        [
+          354.0,
+          246.0
+        ],
+        [
+          452.0,
+          344.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "green cube",
+      "text": "",
+      "points": [
+        [
+          380.0,
+          61.0
+        ],
+        [
+          475.0,
+          164.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "red hexagon",
+      "text": "",
+      "points": [
+        [
+          220.0,
+          119.0
+        ],
+        [
+          325.0,
+          225.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "green star",
+      "text": "",
+      "points": [
+        [
+          121.0,
+          202.0
+        ],
+        [
+          205.0,
+          283.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "red hexagon",
+      "text": "",
+      "points": [
+        [
+          0.0,
+          184.0
+        ],
+        [
+          96.0,
+          267.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "blue cylinder",
+      "text": "",
+      "points": [
+        [
+          0.0,
+          336.0
+        ],
+        [
+          80.0,
+          431.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "blue  star",
+      "text": "",
+      "points": [
+        [
+          64.0,
+          31.0
+        ],
+        [
+          170.0,
+          144.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "red star",
+      "text": "",
+      "points": [
+        [
+          247.0,
+          6.0
+        ],
+        [
+          317.0,
+          101.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    }
+  ],
+  "imagePath": "frame_00048.jpg",
+  "imageData": null,
+  "imageHeight": 480,
+  "imageWidth": 640
+}

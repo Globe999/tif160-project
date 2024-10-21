@@ -1,0 +1,163 @@
+{
+  "version": "0.3.3",
+  "flags": {},
+  "shapes": [
+    {
+      "label": "white hexagon",
+      "text": "",
+      "points": [
+        [
+          445.0,
+          207.0
+        ],
+        [
+          565.0,
+          312.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "white cube",
+      "text": "",
+      "points": [
+        [
+          148.0,
+          32.0
+        ],
+        [
+          254.0,
+          153.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "green hexagon",
+      "text": "",
+      "points": [
+        [
+          0.0,
+          201.0
+        ],
+        [
+          117.0,
+          306.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "green hexagon",
+      "text": "",
+      "points": [
+        [
+          262.0,
+          11.0
+        ],
+        [
+          325.0,
+          108.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "green star",
+      "text": "",
+      "points": [
+        [
+          309.0,
+          148.0
+        ],
+        [
+          404.0,
+          259.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "blue hexagon",
+      "text": "",
+      "points": [
+        [
+          151.0,
+          252.0
+        ],
+        [
+          250.0,
+          354.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "red cylinder",
+      "text": "",
+      "points": [
+        [
+          313.0,
+          319.0
+        ],
+        [
+          407.0,
+          416.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "red hexagon",
+      "text": "",
+      "points": [
+        [
+          0.0,
+          372.0
+        ],
+        [
+          66.0,
+          471.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    },
+    {
+      "label": "blue cube",
+      "text": "",
+      "points": [
+        [
+          0.0,
+          66.0
+        ],
+        [
+          68.0,
+          189.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "rectangle",
+      "flags": {}
+    }
+  ],
+  "imagePath": "frame_00123.jpg",
+  "imageData": null,
+  "imageHeight": 480,
+  "imageWidth": 640
+}
