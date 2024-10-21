@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import os
 from typing import List
 import numpy as np
 import serial
@@ -187,13 +188,16 @@ class ArduinoSerial:
 
     def connect(self):
 
+        if os.name == "nt":
+            self.serPort = "COM3"
+
         if not self.mock:
             try:
                 self.ser = serial.Serial(self.serPort, self.baud)
             except serial.serialutil.SerialException as e:
                 print("Error opening serial port: " + str(e))
                 print("Trying other port...")
-                self.serPort = "/dev/ttyACM1"
+                self.serPort = "/dev/ttyACM1" if os.name == "posix" else "COM4"
                 self.ser = serial.Serial(self.serPort, self.baud)
 
         print("Serial port " + self.serPort + " opened  Baudrate " + str(self.baud))
