@@ -26,10 +26,10 @@ if __name__ == "__main__":
     print(f"Input folder: {input_folder.absolute()}")
     print(f"Output folder: {output_folder.absolute()}")
 
-    train_image_path = Path().cwd() / output_folder / "images" / "train"
-    train_label_path = Path().cwd() / output_folder / "labels" / "train"
-    val_image_path = Path().cwd() / output_folder / "images" / "val"
-    val_label_path = Path().cwd() / output_folder / "labels" / "val"
+    train_image_path = Path().cwd() / output_folder / "images2" / "train"
+    train_label_path = Path().cwd() / output_folder / "labels2" / "train"
+    val_image_path = Path().cwd() / output_folder / "images2" / "val"
+    val_label_path = Path().cwd() / output_folder / "labels2" / "val"
     classes_map = Path().cwd() / classes
 
     train_image_path.mkdir(parents=True, exist_ok=True)
@@ -58,15 +58,19 @@ if __name__ == "__main__":
     train_files = json_files[:split_index]
     val_files = json_files[split_index:]
 
+    def add_random_letters(filename):
+        letters = "".join(random.choices("abcdefghijklmnopqrstuvwxyz", k=3))
+        return f"{filename.stem}_{letters}"
+
+    # Update the process_files function to use add_random_letters
     def process_files(files, image_path, label_path):
         for json_file in files:
             with open(json_file) as file:
                 data = json.load(file)
                 img_height = data["imageHeight"]
                 img_width = data["imageWidth"]
-
-                txt_name = json_file.stem + ".txt"
-                output_txt_file = label_path / txt_name
+                new_file_name = add_random_letters(json_file)
+                output_txt_file = (label_path / new_file_name).with_suffix(".txt")
                 output_txt_file.parent.mkdir(parents=True, exist_ok=True)
                 with open(output_txt_file, "w") as txt_file:
                     for annotations in data["shapes"]:
@@ -75,6 +79,8 @@ if __name__ == "__main__":
                         x2 = annotations["points"][1][0] / img_width
                         y2 = annotations["points"][1][1] / img_height
                         label = annotations["label"]
+                        if label == "blue  star":
+                            label = "blue star"
 
                         if label.startswith("cone"):
                             print(label)
@@ -91,9 +97,46 @@ if __name__ == "__main__":
 
                 image_name = json_file.stem + ".jpg"
                 image_file = json_file.parent / image_name
-                output_image_file = image_path / image_name
+                output_image_file = (image_path / new_file_name).with_suffix(".jpg")
                 output_image_file.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copy2(image_file, output_image_file)
+
+    # def process_files(files, image_path, label_path):
+    #     for json_file in files:
+    #         with open(json_file) as file:
+    #             data = json.load(file)
+    #             img_height = data["imageHeight"]
+    #             img_width = data["imageWidth"]
+
+    #             txt_name = json_file.stem + ".txt"
+    #             output_txt_file = label_path / txt_name
+    #             output_txt_file.parent.mkdir(parents=True, exist_ok=True)
+    #             with open(output_txt_file, "w") as txt_file:
+    #                 for annotations in data["shapes"]:
+    #                     x1 = annotations["points"][0][0] / img_width
+    #                     y1 = annotations["points"][0][1] / img_height
+    #                     x2 = annotations["points"][1][0] / img_width
+    #                     y2 = annotations["points"][1][1] / img_height
+    #                     label = annotations["label"]
+
+    #                     if label.startswith("cone"):
+    #                         print(label)
+
+    #                     if label not in labels.keys():
+    #                         raise Exception(f"Label {label} not in label map.")
+    #                     centerX = (x1 + x2) / 2
+    #                     centerY = (y1 + y2) / 2
+    #                     width = abs(x2 - x1)
+    #                     height = abs(y2 - y1)
+    #                     txt_file.write(
+    #                         f"{labels[label]} {centerX} {centerY} {width} {height}\n"
+    #                     )
+
+    #             image_name = json_file.stem + ".jpg"
+    #             image_file = json_file.parent / image_name
+    #             output_image_file = image_path / image_name
+    #             output_image_file.parent.mkdir(parents=True, exist_ok=True)
+    #             shutil.copy2(image_file, output_image_file)
 
     # Process train files
     process_files(train_files, train_image_path, train_label_path)
