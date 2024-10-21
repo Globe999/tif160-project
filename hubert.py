@@ -84,9 +84,9 @@ class Hubert:
         # Close gripper
         time.sleep(2)
         self._arduino.close_gripper()
-        self.angles = (self.angles[0], 65, -80)
+        # self.angles = (self.angles[0], 65, -80)
 
-        # self.angles = (self.angles[0], 65, self.angles[2])
+        # # self.angles = (self.angles[0], 65, self.angles[2])
         self.angles = (self.angles[0], 65, -60)
         self.open_gripper()
         self.close_gripper()

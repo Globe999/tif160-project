@@ -189,7 +189,7 @@ class ArduinoSerial:
     def connect(self):
 
         if os.name == "nt":
-            self.serPort = "COM3"
+            self.serPort = "COM7"
 
         if not self.mock:
             try:
