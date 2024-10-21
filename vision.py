@@ -335,10 +335,9 @@ class Camera:
         # length_per_pixel_x = 0.071 * 2
         # length_per_pixel_y = 0.098 * 2
         # mid_x_pos = 0.132
-        mid_x_pos = 0.153
-        # length_per_pixel_y = 0.153 * 2
-        length_per_pixel_x = 0.148 * 2
-        length_per_pixel_y = 0.098 * 2
+        mid_x_pos = 0.14
+        length_per_pixel_x = 0.098 * 2
+        length_per_pixel_y = 0.138 * 2
         for object in objects:
             object.global_y = np.sin(np.deg2rad(camera_angle)) * mid_x_pos + (
                 -1 * object.x * length_per_pixel_x * np.cos(np.deg2rad(camera_angle))
@@ -348,6 +347,7 @@ class Camera:
                 np.cos(np.deg2rad(camera_angle)) * mid_x_pos
                 + object.y * length_per_pixel_y * np.cos(np.deg2rad(camera_angle))
                 + object.x * length_per_pixel_x * np.sin(np.deg2rad(camera_angle))
+                
             )
             print(
                 f"Object with shape {object.shape} at x: {object.x}, y: {object.y} and angle {camera_angle}\n has global x: {object.global_x}, global y: {object.global_y}"

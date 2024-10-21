@@ -8,7 +8,7 @@ from hubert import Hubert
 from vision import Camera, CameraDetection
 
 USE_MOCK_ARUDINO = False
-CAMERA_INDEX = 0
+CAMERA_INDEX = 1
 
 
 class ControlPanel(tk.Tk):
@@ -290,6 +290,7 @@ class ControlPanel(tk.Tk):
         print("Done")
         self.hubert.angles = [0, 90, -90]
         self.hubert._arduino.servos[self.hubert._arduino.CAMERA_TILT].position = 2100
+        self.hubert._arduino.send_to_arduino(True)
         self.hubert.say("I AM DONE")
         self.update_info_panel()
 
