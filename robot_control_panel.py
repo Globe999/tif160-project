@@ -7,6 +7,9 @@ import threading
 from hubert import Hubert
 from vision import Camera, CameraDetection
 
+USE_MOCK_ARUDINO = False
+CAMERA_INDEX = 0
+
 
 class ControlPanel(tk.Tk):
     def __init__(self, hubert: Hubert = None):
@@ -16,9 +19,9 @@ class ControlPanel(tk.Tk):
         self.buttons = []
         self.servo_frame = ttk.Frame(self)
         self.servo_frame.pack(side=tk.LEFT, padx=10, pady=5)
-        self.camera = Camera()
+        self.camera = Camera(index=CAMERA_INDEX)
         if hubert is None:
-            self.hubert = Hubert()
+            self.hubert = Hubert(mock=USE_MOCK_ARUDINO)
         else:
             self.hubert = hubert
 
@@ -285,7 +288,7 @@ class ControlPanel(tk.Tk):
                 self.hubert.action_drop_off(idx=idx, position=position)
         # height = 0.04
         print("Done")
-        self.hubert.angles = [0,90,-90]
+        self.hubert.angles = [0, 90, -90]
         self.hubert._arduino.servos[self.hubert._arduino.CAMERA_TILT].position = 2100
         self.hubert.say("I AM DONE")
         self.update_info_panel()
