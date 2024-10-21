@@ -95,7 +95,7 @@ class Servo:
 
 class ArduinoSerial:
     def __init__(
-        self, port: str = "/dev/ttyACM0", baud: int = 57600, mock=False
+        self, port: str = "COM7", baud: int = 57600, mock=False
     ) -> None:
         self.serPort = port
         self.baud = baud
@@ -183,7 +183,7 @@ class ArduinoSerial:
     def close_gripper(self):
         self._gripper_open = False
         # self.servos[self.GRIPPER].position = 2050
-        self.servos[self.GRIPPER].position = 1050
+        self.servos[self.GRIPPER].position = 1350
         self.send_to_arduino(wait_for_reply=True)
 
     def connect(self):

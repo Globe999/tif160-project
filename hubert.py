@@ -9,7 +9,7 @@ from inverse_kinematics import (
 from audio_interface import AudioInterface
 from vision import Camera, CameraDetection
 from utils.serial_communication import ArduinoSerial
-
+import cv2
 
 @dataclass
 class Position:
@@ -156,7 +156,7 @@ class Hubert:
             camera_detections.extend(
                 camera.get_detected_objects_from_nn(frame=frame, angle=i)
             )
-
+        cv2.destroyAllWindows()
         return camera.merge_objects(camera_detections, distance_threshold=0.06)
 
     def get_sorted_objects(
@@ -175,10 +175,10 @@ class Hubert:
                 objects,
                 key=lambda x: (
                     ranks[0].get(
-                        getattr(x, sort_modes[0]), float("inf")
+                        getattr(x, self.sort_mode[0]), float("inf")
                     ),  # Primary sort mode (shape)
                     ranks[1].get(
-                        getattr(x, sort_modes[1]), float("inf")
+                        getattr(x,self.sort_mode[1]), float("inf")
                     ),  # Secondary sort mode (color)
                 ),
             )
@@ -187,23 +187,23 @@ class Hubert:
                 objects,
                 key=lambda x: (
                     ranks[0].get(
-                        getattr(x, sort_modes[0]), float("inf")
+                        getattr(x, self.sort_mode[0]), float("inf")
                     ),  # Primary sort mode (shape)
                 ),
             )
 
         # Sort based on primary and secondary modes (tuple sorting)
-        sorted_objects = sorted(
-            objects,
-            key=lambda x: (
-                ranks[0].get(
-                    getattr(x, self.sort_mode[0]), float("inf")
-                ),  # Primary sort mode (e.g., shape)
-                ranks[1].get(
-                    getattr(x, self.sort_mode[1]), float("inf")
-                ),  # Secondary sort mode (e.g., color)
-            ),
-        )
+        # sorted_objects = sorted(
+        #     objects,
+        #     key=lambda x: (
+        #         ranks[0].get(
+        #             getattr(x, self.sort_mode[0]), float("inf")
+        #         ),  # Primary sort mode (e.g., shape)
+        #         ranks[1].get(
+        #             getattr(x, self.sort_mode[1]), float("inf")
+        #         ),  # Secondary sort mode (e.g., color)
+        #     ),
+        # )
         return_list = []
         order_list = []
         o_idx = 0

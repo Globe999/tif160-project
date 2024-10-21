@@ -6,7 +6,7 @@ class AudioInterface:
     def __init__(self) -> None:
         self.mic = sr.Microphone(device_index=0)
         self.r = sr.Recognizer()
-        self.engine = pyttsx3.init(driverName="espeak")
+        self.engine = pyttsx3.init()
         self.mode = []
         self.instructions = []
 

@@ -16,7 +16,7 @@ class ControlPanel(tk.Tk):
         self.buttons = []
         self.servo_frame = ttk.Frame(self)
         self.servo_frame.pack(side=tk.LEFT, padx=10, pady=5)
-        self.camera = Camera(2)
+        self.camera = Camera()
         if hubert is None:
             self.hubert = Hubert()
         else:
@@ -285,6 +285,8 @@ class ControlPanel(tk.Tk):
                 self.hubert.action_drop_off(idx=idx, position=position)
         # height = 0.04
         print("Done")
+        self.hubert.angles = [0,90,-90]
+        self.hubert._arduino.servos[self.hubert._arduino.CAMERA_TILT].position = 2100
         self.hubert.say("I AM DONE")
         self.update_info_panel()
 
