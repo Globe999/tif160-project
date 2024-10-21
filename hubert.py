@@ -11,6 +11,7 @@ from vision import Camera, CameraDetection
 from utils.serial_communication import ArduinoSerial
 import cv2
 
+
 @dataclass
 class Position:
     x: float
@@ -19,8 +20,8 @@ class Position:
 
 
 class Hubert:
-    def __init__(self):
-        self._arduino = ArduinoSerial()
+    def __init__(self, mock=False, camera_index=1):
+        self._arduino = ArduinoSerial(mock=mock)
         self._angles = np.array([0, 0, 0])
         self._voice = AudioInterface()
         self.position = np.array([0.1, -0.1, 0.3])
@@ -178,7 +179,7 @@ class Hubert:
                         getattr(x, self.sort_mode[0]), float("inf")
                     ),  # Primary sort mode (shape)
                     ranks[1].get(
-                        getattr(x,self.sort_mode[1]), float("inf")
+                        getattr(x, self.sort_mode[1]), float("inf")
                     ),  # Secondary sort mode (color)
                 ),
             )
