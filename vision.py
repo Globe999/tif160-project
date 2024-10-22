@@ -278,12 +278,12 @@ class Camera:
                 if box.conf[0] < 0.8:
                     continue
 
-                if w / h < 0.7 or w / h > 1.3:
-                    continue
 
                 x1, y1, x2, y2 = box.xyxy[0]
                 x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
                 w, h = x2 - x1, y2 - y1
+                if w / h < 0.7 or w / h > 1.3:
+                    continue
 
                 cvzone.cornerRect(frame, (x1, y1, w, h))
 

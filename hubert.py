@@ -73,6 +73,7 @@ class Hubert:
 
         print("Moving to pick up object")
         # Ensure we are not close to ground level.
+        
         self.angles = (theta1, 120, -85)
 
         print(self.angles)
