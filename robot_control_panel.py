@@ -252,6 +252,9 @@ class ControlPanel(tk.Tk):
             button["state"] = "normal"
 
     def run_sorting_loop(self):
+        self.hubert.say(
+            f"Starting sorting loop."
+        )
         self.hubert.set_camera_position()
         camera_detections: List[CameraDetection] = self.hubert.detect_objects(
             self.camera
@@ -261,13 +264,11 @@ class ControlPanel(tk.Tk):
         if not camera_detections:
             self.hubert.say("No objects found.")
             return
-        self.hubert.say(
-            f"Starting sorting loop. I have found {len(camera_detections)} objects."
-        )
+        self.hubert.say(f"I have found {len(camera_detections)} objects.")
         # self.hubert.set_sort_mode()
         # self.hubert.set_sort_order()
 
-        self.hubert.sort_mode = ["shape"]
+        self.hubert.sort_mode = ["shape","color"]
         # mode = AudioInterface.get_mode()
 
         self.hubert.sort_order = [["hexagon", "cylinder", "star"], ["red", "green"]]
