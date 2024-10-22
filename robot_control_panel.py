@@ -272,6 +272,7 @@ class ControlPanel(tk.Tk):
 
         self.hubert.sort_order = [["hexagon", "cylinder", "star"], ["red", "green"]]
         sorted_objects = self.hubert.get_sorted_objects(camera_detections)
+        print(sorted_objects)
         for position, objects in enumerate(sorted_objects):
             for idx, obj in enumerate(objects):
                 print(
@@ -290,7 +291,7 @@ class ControlPanel(tk.Tk):
         print("Done")
         self.hubert.angles = [0, 90, -90]
         self.hubert._arduino.servos[self.hubert._arduino.CAMERA_TILT].position = 2100
-        self.hubert._arduino.send_to_arduino(True)
+        self.hubert._arduino.send_to_arduino()
         self.hubert.say("I AM DONE")
         self.update_info_panel()
 

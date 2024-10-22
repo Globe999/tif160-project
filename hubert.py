@@ -104,13 +104,16 @@ class Hubert:
 
         x, y, z = drop_off_pos[idx]
         theta1, theta2, theta3 = self.inverse_kinematics(x, y, z)
-
+        if position == 0:
+            print("hello")
+            theta1 = 66
         if position == 1:
             theta1 = 30
         if position == 2:
             theta1 = 0
 
-        print("Dropping off object at", x, y, z)
+        print("Dropping off object at ", x, y, z)
+        print("At positon",position)
         print("Calculated angles", theta1, theta2, theta3)
 
         print("Moving to drop off object")
