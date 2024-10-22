@@ -268,10 +268,10 @@ class ControlPanel(tk.Tk):
         # self.hubert.set_sort_mode()
         # self.hubert.set_sort_order()
 
-        self.hubert.sort_mode = ["shape","color"]
+        self.hubert.sort_mode = ["shape", "color"]
         # mode = AudioInterface.get_mode()
 
-        self.hubert.sort_order = [["hexagon", "cylinder", "star"], ["red", "green"]]
+        self.hubert.sort_order = [["hexagon", "cylinder", "star"], ["red", "green","blue"]]
         sorted_objects = self.hubert.get_sorted_objects(camera_detections)
         print(sorted_objects)
         for position, objects in enumerate(sorted_objects):

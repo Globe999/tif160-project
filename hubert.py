@@ -73,7 +73,7 @@ class Hubert:
 
         # print("Moving to pick up object")
         # Ensure we are not close to ground level.
-        
+
         self.angles = (theta1, 120, -85)
 
         # print(self.angles)
@@ -169,35 +169,47 @@ class Hubert:
     def get_sorted_objects(
         self,
         objects: List[CameraDetection],
-    ) -> List[CameraDetection]:
-        # Create rank mappings for each sort mode (primary and secondary)
+    ) -> List[List[CameraDetection]]:
+        # Create rank mappings for each sort mode (primary, secondary, etc.)
         ranks = [
             {value: i for i, value in enumerate(order_list)}
             for order_list in self.sort_order
         ]
-        sorted_objects = []
-        if len(self.sort_mode) == 2:
+        # Sort_mode = ["shape", "color"]
+        # self.hubert.sort_order = [["hexagon", "cylinder", "star"], ["red", "green","blue"]]
 
-            sorted_objects = sorted(
-                objects,
-                key=lambda x: (
-                    ranks[0].get(
-                        getattr(x, self.sort_mode[0]), float("inf")
-                    ),  # Primary sort mode (shape)
-                    ranks[1].get(
-                        getattr(x, self.sort_mode[1]), float("inf")
-                    ),  # Secondary sort mode (color)
-                ),
+        sorted_lists = []  # ist to hold sorted lists for each sort mode
+
+        for order in self.sort_order[0]:
+
+            # Filter out all objects not containing order
+            filtered_objects = filter(
+                lambda x: getattr(x, self.sort_mode[0]) == order, objects
             )
-        else:
-            sorted_objects = sorted(
-                objects,
-                key=lambda x: (
-                    ranks[0].get(
-                        getattr(x, self.sort_mode[0]), float("inf")
-                    ),  # Primary sort mode (shape)
-                ),
-            )
+            if len(self.sort_mode) > 1:
+                sorted_lists.append(
+                    sorted(
+                        filtered_objects,
+                        key=lambda x: ranks[1].get(
+                            getattr(x, self.sort_mode[1]), float("inf")
+                        ),
+                    )
+                )
+        return sorted_lists
+
+        # Sort objects based on each sort mode independently
+        # for i in range(len(self.sort_mode)):
+        #     sorted_objects = sorted(
+        #         objects,
+        #         key=lambda x: (
+        #             ranks[i].get(
+        #                 getattr(x, self.sort_mode[i]), float("inf")
+        #             )  # Sort based on the current sort mode (shape, color, etc.)
+        #         )
+        #     )
+        #     sorted_lists.append(sorted_objects)  # Append each sorted list to the result
+
+        # return sorted_lists
 
         # Sort based on primary and secondary modes (tuple sorting)
         # sorted_objects = sorted(
@@ -214,21 +226,6 @@ class Hubert:
         return_list = []
         order_list = []
         o_idx = 0
-
-        for obj in sorted_objects:
-            if getattr(obj, self.sort_mode[0]) == self.sort_order[0][o_idx]:
-                order_list.append(obj)
-            else:
-                if order_list:
-                    return_list.append(order_list)
-                    order_list = []
-                o_idx += 1
-                if o_idx >= len(self.sort_order[0]):
-                    break
-                order_list.append(obj)
-
-        if order_list:
-            return_list.append(order_list)
 
         return return_list
 
