@@ -58,7 +58,7 @@ class Camera:
         self.width = 640
         self.height = 480
         self.model = YOLO(
-            Path().cwd() / "neural_network" / "weights" / "best_100_epochs.pt"
+            Path().cwd() / "neural_network" / "weights" / "best_new_data.pt"
         )
         self.frame_queue = queue.Queue(maxsize=10)
         self.capture_thread = threading.Thread(target=self._capture_frames)
