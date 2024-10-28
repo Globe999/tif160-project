@@ -45,11 +45,13 @@ class Hubert:
         self._arduino.send_to_arduino(wait_for_reply=True)
 
     def set_sort_mode(self):
+        self.sort_mode = None
         # TODO:Replace this with sort modes recieved from the camera detections
         available_sort_modes = ["shape", "color", "size"]
         self.sort_mode = self._voice.get_sort_mode(available_sort_modes)
 
     def set_sort_order(self):
+        self.sort_order = None
         self.sort_order = self._voice.get_sort_order(self.sort_mode)
 
     def say(self, text):
@@ -195,6 +197,8 @@ class Hubert:
                         ),
                     )
                 )
+            else:
+                sorted_lists.append(list(filtered_objects))
         return sorted_lists
 
         # Sort objects based on each sort mode independently

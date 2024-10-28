@@ -94,9 +94,7 @@ class Servo:
 
 
 class ArduinoSerial:
-    def __init__(
-        self, port: str = "COM7", baud: int = 57600, mock=False
-    ) -> None:
+    def __init__(self, port: str = "COM7", baud: int = 57600, mock=False) -> None:
         self.serPort = port
         self.baud = baud
         self.BODY = 0
@@ -127,7 +125,7 @@ class ArduinoSerial:
                 offset=0,
             ),
             Servo(
-                position=1300,
+                position=2100,
                 min=950,
                 max=2400,
                 name="camera_tilt",

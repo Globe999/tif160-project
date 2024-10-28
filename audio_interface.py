@@ -8,22 +8,22 @@ class AudioInterface:
         self.r = sr.Recognizer()
         self.engine = pyttsx3.init()
         self.mode = []
-        self.instructions = []
 
     def take_audio_input(self):
 
         with self.mic as source:
             print("Speak Anything!")
-            audio = self.r.listen(source, timeout=2, phrase_time_limit=10)
+            audio = self.r.listen(source, timeout=2, phrase_time_limit=5)
         # load in audiofile
 
         # use googles text to speech to get text
-        text = self.r.recognize_google(audio, show_all=True)["alternative"][0]
+        text = []
+        if audio:
+            text = self.r.recognize_google(audio, show_all=True)["alternative"][0]
         if text:
-            words = text["transcript"].lower().split()
-            return words
-        else:
-            return 0
+            text = text["transcript"].lower().split()
+
+        return text
 
     def output_audio(self, string):
         self.engine.say(string)
@@ -31,21 +31,23 @@ class AudioInterface:
 
     def get_sort_mode(self, modes=["color", "size", "shape"]):
         self.output_audio("What mode should i sort by")
+        self.mode = []
         while True:
             words = self.take_audio_input()
+            print(words)
             if words:
                 for m in modes:
                     if m in words:
                         self.mode.append(m)
                 t = 0
-                for m in self.mode:
-                    if t == 0:
-                        self.output_audio("Ok, i will sort by " + m)
-                        t = 1
-                    else:
-                        self.output_audio("and m")
-
-                return self.mode
+                if self.mode:
+                    for m in self.mode:
+                        if t == 0:
+                            self.output_audio("Ok, i will sort by " + m)
+                            t = 1
+                        else:
+                            self.output_audio("and " + m)
+                    return self.mode
             self.output_audio("Please repeat what mode you want")
 
     def get_sort_order(self, mode):
@@ -78,19 +80,25 @@ class AudioInterface:
 
         #         self.output_audio("Please repeat what order you want")
         # elif len(mode)==2:
+        print(mode)
         while True:
             words = self.take_audio_input()
+            print(words)
             if words:
                 for m in mode:
                     temp_list = []
                     for word in words:
                         if m == "shape" and word in shapes:
                             temp_list.append(word)
+                            print(word)
                         elif m == "size" and word in size:
                             temp_list.append(word)
+                            print(word)
                         elif m == "color" and word in colors:
                             temp_list.append(word)
+                            print(word)
                     instructions.append(temp_list)
+                    print(instructions)
             if len(instructions) == 1:
                 text = "Order set to " + ", ".join(instructions[0])
                 self.output_audio(text)
