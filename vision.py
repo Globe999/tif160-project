@@ -278,7 +278,6 @@ class Camera:
                 if box.conf[0] < 0.8:
                     continue
 
-
                 x1, y1, x2, y2 = box.xyxy[0]
                 x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
                 w, h = x2 - x1, y2 - y1
@@ -372,7 +371,11 @@ class Camera:
                     (point.global_x - other_point.global_x) ** 2
                     + (point.global_y - other_point.global_y) ** 2
                 )
-                if (dist <= distance_threshold) and (point.color == other_point.color):
+                if (
+                    (dist <= distance_threshold)
+                    and (point.color == other_point.color)
+                    and (point.shape == other_point.shape)
+                ):
                     cluster.append(other_point)
                     idx_to_remove.append(idx)
 
